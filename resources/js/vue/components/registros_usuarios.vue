@@ -35,7 +35,7 @@
     </form>
   </template>
   
-  <script>
+<script>
   import { useFormModel } from '../jsComponents/conexionModelos.js';
   
   export default {
@@ -57,5 +57,4 @@
       };
     },
   };
-  </script>
-  
+</script>

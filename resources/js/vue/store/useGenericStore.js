@@ -53,8 +53,16 @@ export const useGenericStore = defineStore('generic', {
             success: function (data) {
               resolve(data);
             },
-            error: function (xhr, status, error) {
-              reject(new Error(`Error: ${status} - ${error}`));
+            error: function (xhr) {
+              // Si el código de estado es 401, redirigir al inicio de sesión
+              if (xhr.status === 401) {
+                console.warn('Usuario no autorizado, redirigiendo....');
+                alert("no tienes permisos");
+                window.location.href = '/vue#/login';
+              } else {
+                // Rechazar el error para manejarlo en el catch
+                reject(new Error(`Error: ${xhr.status} - ${xhr.statusText}`));
+              }
             },
           });
         });
@@ -102,8 +110,16 @@ export const useGenericStore = defineStore('generic', {
             success: function (data) {
               resolve(data);
             },
-            error: function (xhr, status, error) {
-              reject(new Error(`Error: ${status} - ${error}`));
+            error: function (xhr) {
+              // Si el código de estado es 401, redirigir al inicio de sesión
+              if (xhr.status === 401) {
+                console.warn('Usuario no autorizado, redirigiendo....');
+                alert("no tienes permisos");
+                window.location.href = '/vue#/login';
+              } else {
+                // Rechazar el error para manejarlo en el catch
+                reject(new Error(`Error: ${xhr.status} - ${xhr.statusText}`));
+              }
             },
           });
         });
@@ -146,9 +162,17 @@ export const useGenericStore = defineStore('generic', {
             success: function (data) {
               resolve(data);
             },
-            error: function (xhr, status, error) {
-              reject(new Error(`Error: ${status} - ${error}`));
-            }
+            error: function (xhr) {
+              // Si el código de estado es 401, redirigir al inicio de sesión
+              if (xhr.status === 401) {
+                console.warn('Usuario no autorizado, redirigiendo....');
+                alert("no tienes permisos");
+                window.location.href = '/vue#/login';
+              } else {
+                // Rechazar el error para manejarlo en el catch
+                reject(new Error(`Error: ${xhr.status} - ${xhr.statusText}`));
+              }
+            },
           });
         });
     

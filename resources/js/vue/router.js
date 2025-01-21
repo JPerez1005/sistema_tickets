@@ -4,6 +4,8 @@ import registrar_tickets from "./components/registros_tickets.vue";
 import listas_usuarios from "./components/listas_usuarios.vue";
 import registrar_usuarios from "./components/registros_usuarios.vue";
 import listas_historias from "./components/listas_historias.vue";
+import gestion_tickets from "./components/gestion_tickets.vue";
+import gestion_usuarios from "./components/gestion_usuarios.vue";
 // descomentar apenas obtenga seguridad con sanctum
 import login from "./components/auth/LoginComponent.vue";
 
@@ -41,6 +43,16 @@ const routes = [
         name: 'listas_historias',
         path: '/listas_historias',
         component: listas_historias
+    },
+    {
+        name: 'gestion_tickets',
+        path: '/gestion_tickets',
+        component: gestion_tickets
+    },
+    {
+        name: 'gestion_usuarios',
+        path: '/gestion_usuarios',
+        component: gestion_usuarios
     },
     // descomentar apenas obtenga seguridad con sanctum
     {

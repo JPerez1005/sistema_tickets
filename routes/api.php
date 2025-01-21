@@ -12,6 +12,7 @@ Route::get('/user', function (Request $request) {
 
 
 Route::middleware('auth:sanctum')->post('/user/logout', [UserController::class, 'logout']);
+// Route::post('/user/logout', [UserController::class, 'logout']);
 Route::post('/user/login',[UserController::class,'login']);
 
 Route::prefix('{type}')->middleware('auth:sanctum')->group(function () {

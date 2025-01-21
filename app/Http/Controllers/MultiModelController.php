@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Auth;
 
 class MultiModelController extends Controller
 {
@@ -28,6 +30,9 @@ class MultiModelController extends Controller
     public function all($type)
     {
         $model = $this->getModel($type);
+
+        $this->autorizaciones($type);
+
         return response()->json($model::all());
     }
 
@@ -49,6 +54,15 @@ class MultiModelController extends Controller
     public function store(Request $request, $type)
     {
         $model = $this->getModel($type);
+
+        if ($type == 'user') {
+            $user = Auth::user(); // Obtiene el usuario autenticado
+            $allowed = Gate::allows('permisoAdministrador', $user);
+    
+            if (!$allowed) {
+                return response()->json(['message' => 'Unauthorized'], 401);
+            }
+        }
 
         // Validar los datos con las reglas del modelo
         $validatedData = $request->validate($model::validationRules());
@@ -81,18 +95,47 @@ class MultiModelController extends Controller
     public function update(Request $request, $type, $id)
     {
         $model = $this->getModel($type);
+
+        $this->autorizaciones($type);
+
         $instance = $model::findOrFail($id);
         $validatedData = $request->validate($model::validationRules());
         $instance->update($validatedData);
         return response()->json($instance);
     }
 
+    
+
     // Eliminar un registro
     public function destroy($type, $id)
     {
         $model = $this->getModel($type);
+
+        $this->autorizaciones($type);
+
         $instance = $model::findOrFail($id);
         $instance->delete();
         return response()->json(['message' => ucfirst($type) . ' eliminado con éxito']);
     }
+
+    private function autorizaciones($type){
+        if ($type == 'user' || $type=='historias') {
+            $user = Auth::user(); // Obtiene el usuario autenticado
+            $allowed = Gate::allows('permisoAdministrador', $user);
+    
+            if (!$allowed) {
+                return response()->json(['message' => 'Unauthorized'], 401);
+            }
+        }
+
+        if ($type == 'tickets') {
+            $user = Auth::user(); // Obtiene el usuario autenticado
+            $allowed = Gate::allows('permisoAdministradorYSoporte', $user);
+
+            if (!$allowed) {
+                return response()->json(['message' => 'Unauthorized'], 401);
+            }
+        }
+    }
+    
 }

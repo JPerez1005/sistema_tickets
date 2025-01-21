@@ -31,7 +31,23 @@ class MultiModelController extends Controller
     {
         $model = $this->getModel($type);
 
-        $this->autorizaciones($type);
+        if ($type == 'user' || $type=='historias') {
+            $user = Auth::user(); // Obtiene el usuario autenticado
+            $allowed = Gate::allows('permisoAdministrador', $user);
+    
+            if (!$allowed) {
+                return response()->json(['message' => 'Unauthorized'], 401);
+            }
+        }
+
+        if ($type == 'tickets') {
+            $user = Auth::user(); // Obtiene el usuario autenticado
+            $allowed = Gate::allows('permisoAdministradorYSoporte', $user);
+
+            if (!$allowed) {
+                return response()->json(['message' => 'Unauthorized'], 401);
+            }
+        }
 
         return response()->json($model::all());
     }
@@ -96,29 +112,6 @@ class MultiModelController extends Controller
     {
         $model = $this->getModel($type);
 
-        $this->autorizaciones($type);
-
-        $instance = $model::findOrFail($id);
-        $validatedData = $request->validate($model::validationRules());
-        $instance->update($validatedData);
-        return response()->json($instance);
-    }
-
-    
-
-    // Eliminar un registro
-    public function destroy($type, $id)
-    {
-        $model = $this->getModel($type);
-
-        $this->autorizaciones($type);
-
-        $instance = $model::findOrFail($id);
-        $instance->delete();
-        return response()->json(['message' => ucfirst($type) . ' eliminado con éxito']);
-    }
-
-    private function autorizaciones($type){
         if ($type == 'user' || $type=='historias') {
             $user = Auth::user(); // Obtiene el usuario autenticado
             $allowed = Gate::allows('permisoAdministrador', $user);
@@ -136,6 +129,41 @@ class MultiModelController extends Controller
                 return response()->json(['message' => 'Unauthorized'], 401);
             }
         }
+
+        $instance = $model::findOrFail($id);
+        $validatedData = $request->validate($model::validationRules());
+        $instance->update($validatedData);
+        return response()->json($instance);
+    }
+
+    
+
+    // Eliminar un registro
+    public function destroy($type, $id)
+    {
+        $model = $this->getModel($type);
+
+        if ($type == 'user' || $type=='historias') {
+            $user = Auth::user(); // Obtiene el usuario autenticado
+            $allowed = Gate::allows('permisoAdministrador', $user);
+    
+            if (!$allowed) {
+                return response()->json(['message' => 'Unauthorized'], 401);
+            }
+        }
+
+        if ($type == 'tickets') {
+            $user = Auth::user(); // Obtiene el usuario autenticado
+            $allowed = Gate::allows('permisoAdministradorYSoporte', $user);
+
+            if (!$allowed) {
+                return response()->json(['message' => 'Unauthorized'], 401);
+            }
+        }
+
+        $instance = $model::findOrFail($id);
+        $instance->delete();
+        return response()->json(['message' => ucfirst($type) . ' eliminado con éxito']);
     }
     
 }

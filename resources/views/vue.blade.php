@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vista Principal</title>
 </head>
-<body>
+<body class="bg-dark">
     <!-- descomentar apenas comience a usar sanctum con tokens -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @if(Auth::check())
@@ -27,6 +27,7 @@
     @vite(['resources/js/vue/main.js'])
 <!-- Code injected by live-server -->
 <script>
+	
 	// <![CDATA[  <-- For SVG support
 	if ('WebSocket' in window) {
 		(function () {

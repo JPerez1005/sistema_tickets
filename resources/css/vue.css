@@ -1,1 +1,47 @@
+@import 'bootstrap/dist/css/bootstrap.min.css';
  
+
+:root{
+    --oscuro: #16191c;
+    --oscuro-x: #1e2126;
+    --luz: #f1f1f1;
+}
+
+.bg-dark{
+    background-color: var(--oscuro) !important;
+}
+
+.bg-dark-x{
+    background-color: var(--oscuro-x) !important;
+}
+
+body{
+    color: var(--luz);
+    font-weight: 300;
+}
+
+input::placeholder{
+    color: var(--luz);
+}
+
+/* Cambiar el color del texto del placeholder */
+input::placeholder {
+    color: white; /* Color blanco para el placeholder */
+}
+
+/* Cambiar el color del texto cuando el usuario escribe */
+input {
+    color: white; /* Color blanco para el texto */
+}
+
+.img-1{
+    background-image: url('https://images.unsplash.com/photo-1713947506179-baa795d9c893?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+    background-size: cover;
+    background-position: center;
+}
+
+.img-2{
+    background-image: url('https://images.unsplash.com/photo-1714974528693-f77f6fcc56af?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+    background-size: cover;
+    background-position: center;
+}

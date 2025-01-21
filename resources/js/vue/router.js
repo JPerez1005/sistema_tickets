@@ -1,0 +1,58 @@
+import { createRouter, createWebHistory, createWebHashHistory } from 'vue-router';
+import listas_tickets from "./components/listas_tickets.vue";
+import registrar_tickets from "./components/registros_tickets.vue";
+import listas_usuarios from "./components/listas_usuarios.vue";
+import registrar_usuarios from "./components/registros_usuarios.vue";
+import listas_historias from "./components/listas_historias.vue";
+// descomentar apenas obtenga seguridad con sanctum
+import login from "./components/auth/LoginComponent.vue";
+
+// Crear una constante para determinar el modo de historial
+// Puedes cambiar entre `createWebHistory` y `createWebHashHistory` fácilmente
+const useHashHistory = true; // Cambia a `true` si prefieres hash history
+
+const routes = [
+    {
+        name: 'home',
+        path: '/',
+        redirect: '/vue'  // Redirigir la raíz a la ruta '/vue'
+    },
+    {
+        name: 'listas_tickets',
+        path: '/listas_tickets',
+        component: listas_tickets
+    },
+    {
+        name: 'registrar_tickets',
+        path: '/registrar_tickets',
+        component: registrar_tickets
+    },
+    {
+        name: 'listas_usuarios',
+        path: '/listas_usuarios',
+        component: listas_usuarios
+    },
+    {
+        name: 'registrar_usuarios',
+        path: '/registrar_usuarios',
+        component: registrar_usuarios
+    },
+    {
+        name: 'listas_historias',
+        path: '/listas_historias',
+        component: listas_historias
+    },
+    // descomentar apenas obtenga seguridad con sanctum
+    {
+        name: 'login',
+        path: '/login',
+        component: login
+    },
+];
+
+const router = createRouter({
+    history: useHashHistory ? createWebHashHistory() : createWebHistory(),
+    routes,
+});
+
+export default router;

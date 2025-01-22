@@ -2,7 +2,7 @@
 
   <ul class="nav justify-content-center align-items-center" v-if="isLoggedIn">
     <!-- Opción general -->
-    <li class="nav-item">
+    <li class="nav-item" v-if="user && user.rol === 'usuario'">
       <router-link :to="{name: 'gestion_tickets_usuarios'}" class="nav-link">Gestion Tickets (u)</router-link>
     </li>
   
@@ -16,9 +16,6 @@
     </li>
   
     <!-- Opciones para administrador y soporte -->
-    <li class="nav-item" v-if="user && (user.rol === 'administrador' || user.rol === 'soporte')">
-      <router-link :to="{name: 'listas_tickets'}" class="nav-link">Listas de tickets</router-link>
-    </li>
     <li class="nav-item" v-if="user && (user.rol === 'administrador' || user.rol === 'soporte')">
       <router-link :to="{name: 'gestion_tickets'}" class="nav-link">Gestión de Tickets</router-link>
     </li>

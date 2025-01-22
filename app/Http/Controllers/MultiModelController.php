@@ -57,6 +57,15 @@ class MultiModelController extends Controller
     {
         $model = $this->getModel($type);
         $query = $model::query();
+        $user = Auth::user();
+        $allowed = Gate::allows('permisoUsuario', $user);
+
+        if ($allowed) {
+            if ($type == 'tickets') {
+                $query->where('usuario_creacion', $user->id);
+            }
+        }
+        
 
         if ($request->has('search')) {
             $search = $request->input('search');

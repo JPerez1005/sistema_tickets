@@ -1,7 +1,4 @@
 import { createRouter, createWebHistory, createWebHashHistory } from 'vue-router';
-import listas_tickets from "./components/listas_tickets.vue";
-import registrar_tickets from "./components/registros_tickets.vue";
-import listas_usuarios from "./components/listas_usuarios.vue";
 import gestion_tickets_usuarios from "./components/gestion_tickets_usuarios.vue";
 import listas_historias from "./components/listas_historias.vue";
 import gestion_tickets from "./components/gestion_tickets.vue";
@@ -18,21 +15,6 @@ const routes = [
         name: 'home',
         path: '/',
         redirect: '/vue'  // Redirigir la raíz a la ruta '/vue'
-    },
-    {
-        name: 'listas_tickets',
-        path: '/listas_tickets',
-        component: listas_tickets
-    },
-    {
-        name: 'registrar_tickets',
-        path: '/registrar_tickets',
-        component: registrar_tickets
-    },
-    {
-        name: 'listas_usuarios',
-        path: '/listas_usuarios',
-        component: listas_usuarios
     },
     {
         name: 'gestion_tickets_usuarios',

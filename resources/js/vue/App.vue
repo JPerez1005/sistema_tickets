@@ -1,6 +1,38 @@
 <template>
-    <div v-if="isLoggedIn">
-      <button @click="logout">Cerrar sesión</button>
+
+  <ul class="nav justify-content-center align-items-center" v-if="isLoggedIn">
+    <!-- Opción general -->
+    <li class="nav-item">
+      <router-link :to="{name: 'gestion_tickets_usuarios'}" class="nav-link">Gestion Tickets (u)</router-link>
+    </li>
+  
+    <!-- Opciones específicas para administradores -->
+    
+    <li class="nav-item" v-if="user && user.rol === 'administrador'">
+      <router-link :to="{name: 'listas_historias'}" class="nav-link">Listas de historias</router-link>
+    </li>
+    <li class="nav-item" v-if="user && user.rol === 'administrador'">
+      <router-link :to="{name: 'gestion_usuarios'}" class="nav-link">Gestión de Usuarios</router-link>
+    </li>
+  
+    <!-- Opciones para administrador y soporte -->
+    <li class="nav-item" v-if="user && (user.rol === 'administrador' || user.rol === 'soporte')">
+      <router-link :to="{name: 'listas_tickets'}" class="nav-link">Listas de tickets</router-link>
+    </li>
+    <li class="nav-item" v-if="user && (user.rol === 'administrador' || user.rol === 'soporte')">
+      <router-link :to="{name: 'gestion_tickets'}" class="nav-link">Gestión de Tickets</router-link>
+    </li>
+  
+    <!-- Opción de cerrar sesión -->
+    <li class="nav-item">
+      <a class="nav-link text-light" href="#" @click.prevent="logout">Cerrar sesión</a>
+    </li>
+  </ul>
+  
+  
+
+    <!-- <div v-if="isLoggedIn">
+      
       <br><router-link :to="{name:'registrar_tickets'}" class="inicio">Registros de tickets</router-link>
       
       
@@ -14,7 +46,7 @@
         <router-link :to="{name:'listas_tickets'}" class="inicio">Listas de tickets</router-link>
         <br><router-link :to="{name:'gestion_tickets'}" class="inicio">Gestión de Tickets</router-link>
       </div>
-    </div>
+    </div> -->
   
     <router-view></router-view>
   </template>

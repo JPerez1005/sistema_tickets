@@ -8,6 +8,7 @@ export const useGenericStore = defineStore('generic', {
     data: [],
     isLoading: false,
     modelType: '',
+    pagination: { total: 0, perPage: 10, currentPage: 1 },
     url: 'http://127.0.0.1:8000/api/',
     token: localStorage.getItem('auth_token') || '', // Recupera el token al inicializar
   }),
@@ -28,6 +29,47 @@ export const useGenericStore = defineStore('generic', {
     setModelType(modelType) {
       this.modelType = modelType;
     },
+    async buscarYPaginar(page = 1, search = '') {
+      this.isLoading = true;
+      
+      try {
+
+        const token = localStorage.getItem('auth_token');
+        if (!token) {
+          console.error('Token no encontrado.');
+          return;
+        }
+
+        const response = await axios.get(`/api/${this.modelType}/paginate`, {
+          params: { page, search },
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        console.log("entré");
+    
+            // Procesar los datos de la respuesta y asignarlos a la variable de datos
+            this.data = response.data.data; // Ajusta según la estructura de tu respuesta
+            this.pagination = {
+                total: response.data.total,
+                perPage: response.data.per_page,
+                currentPage: response.data.current_page,
+            };
+        } catch (error) {
+            // Manejo de errores, si el error es 401, redirigir al login
+            if (error.response?.status === 401) {
+                console.warn('No autorizado. Redirigiendo al inicio de sesión...');
+                alert('No tienes permisos para realizar esta acción.');
+                // window.location.href = '/vue#/login';
+            } else {
+                console.error('Error en buscarYPaginar:', error.response || error);
+            }
+        } finally {
+            this.isLoading = false;
+        }
+    },
+  
     async fetchData() {
       if (!this.token) {
         console.error('No se encontró el token en el estado global.');
@@ -188,3 +230,4 @@ export const useGenericStore = defineStore('generic', {
   },
   persist: true,
 });
+

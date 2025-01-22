@@ -2,7 +2,7 @@ import { createRouter, createWebHistory, createWebHashHistory } from 'vue-router
 import listas_tickets from "./components/listas_tickets.vue";
 import registrar_tickets from "./components/registros_tickets.vue";
 import listas_usuarios from "./components/listas_usuarios.vue";
-import registrar_usuarios from "./components/registros_usuarios.vue";
+import gestion_tickets_usuarios from "./components/gestion_tickets_usuarios.vue";
 import listas_historias from "./components/listas_historias.vue";
 import gestion_tickets from "./components/gestion_tickets.vue";
 import gestion_usuarios from "./components/gestion_usuarios.vue";
@@ -35,9 +35,9 @@ const routes = [
         component: listas_usuarios
     },
     {
-        name: 'registrar_usuarios',
-        path: '/registrar_usuarios',
-        component: registrar_usuarios
+        name: 'gestion_tickets_usuarios',
+        path: '/gestion_tickets_usuarios',
+        component: gestion_tickets_usuarios
     },
     {
         name: 'listas_historias',

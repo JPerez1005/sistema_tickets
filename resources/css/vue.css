@@ -45,3 +45,33 @@ input {
     background-size: cover;
     background-position: center;
 }
+
+.nav{
+    background-color: #44535e;
+    color: white;
+    text-decoration: none;
+}
+
+.nav li a{
+    color: #d9ebe9;
+}
+
+.nav li a:hover{
+    color: #798f8c;
+}
+
+/* .nav li a:active {
+    color: #798f8c; 
+} */
+
+.nav li a:visited {
+    color: #d9ebe9; /* Color después de visitar */
+}
+
+.page-link{
+    color: #d9ebe9;
+}
+
+.page-link:active{
+    color: #798f8c; 
+}

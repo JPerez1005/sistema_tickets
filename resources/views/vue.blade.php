@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vista Principal</title>
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 </head>
-<body class="bg-dark">
+<body class="bg-light">
     <!-- descomentar apenas comience a usar sanctum con tokens -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @if(Auth::check())
@@ -26,6 +27,9 @@
     <div id="app"></div>
     @vite(['resources/js/vue/main.js'])
 <!-- Code injected by live-server -->
+ <!-- Agregar la librería de Bootstrap JS (esto debe ir al final de tu archivo <body>) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 <script>
 	
 	// <![CDATA[  <-- For SVG support

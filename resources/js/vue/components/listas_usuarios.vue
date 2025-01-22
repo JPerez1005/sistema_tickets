@@ -12,7 +12,7 @@
   </template>
   
 <script>
-    import { useListModel } from '../jsComponents/conexionModelos.js';
+    import { useListModel2 } from '../jsComponents/conexionModelos.js';
     import { useRouter } from 'vue-router';
 
     export default {
@@ -26,7 +26,7 @@
             eliminar,
             search,
             buscar,
-            } = useListModel('user');
+            } = useListModel2('user');
 
             const editar = (id) => {
                 router.push({ name: 'registrar_usuarios', params: { id } }); // Usar el nombre actual de la ruta

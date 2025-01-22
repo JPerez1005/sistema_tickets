@@ -60,10 +60,16 @@ class MultiModelController extends Controller
 
         if ($request->has('search')) {
             $search = $request->input('search');
-            $query->where('nombre', 'like', "%{$search}%");
+    
+            // Condición según el tipo de tabla
+            if ($type === 'tickets') {
+                $query->where('titulo', 'like', "%{$search}%");
+            } elseif ($type === 'users') {
+                $query->where('name', 'like', "%{$search}%");
+            }
         }
 
-        return response()->json($query->paginate(3));
+        return response()->json($query->paginate(5));
     }
 
     // Crear un nuevo registro
@@ -97,7 +103,6 @@ class MultiModelController extends Controller
             'data' => $instance
         ], 201);
     }
-
 
     // Mostrar un registro específico
     public function show($type, $id)
@@ -135,8 +140,6 @@ class MultiModelController extends Controller
         $instance->update($validatedData);
         return response()->json($instance);
     }
-
-    
 
     // Eliminar un registro
     public function destroy($type, $id)

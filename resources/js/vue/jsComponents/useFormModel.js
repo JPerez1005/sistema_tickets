@@ -47,11 +47,19 @@ export function useFormModel(modelType, defaultForm) {
       let userId = null;
       let ticketId = null;
       const entidadAfectada = modelType;
-  
+
       if (editMode.value) {
         try {
           console.log("Editando, ID de ruta:", route.params.id);
           modelId = route.params.id; // Obtén el ID de la ruta
+
+          if (modelType === 'tickets') { // Verifica si el tipo de modelo es 'tickets'
+            // Modificar los valores en el formulario según sea necesario
+            // form.value.usuario_creacion = 123; // Cambiar a un valor específico
+            form.value.usuario_respuesta = window.appData.user.id; // Cambiar a un valor específico
+          }
+
+          console.log(form.value);
           await store.actualizarItem(modelId, form.value); // Actualiza el elemento con los datos del formulario
           accion = 'modificacion'; // Acción para registro de historia
           console.log("Elemento actualizado exitosamente. ID:", modelId);
@@ -144,6 +152,7 @@ export function useFormModel(modelType, defaultForm) {
   
 
   const cancelar = () => {
+    router.push({name:'gestion_usuarios'});
     // router.push({ name: `Tabla${modelType.charAt(0).toUpperCase() + modelType.slice(1).replace(/_/g, '')}` });
   };
 

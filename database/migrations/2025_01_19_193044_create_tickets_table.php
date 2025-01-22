@@ -15,6 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('titulo');
             $table->string('descripcion');
+            $table->string('respuesta')->nullable();
+            $table->integer('usuario_creacion')->nullable();
+            $table->integer('usuario_respuesta')->nullable();
+            $table->timestamp('fecha_respuesta')->nullable();
             $table->enum('estado', ['abierto', 'en_proceso', 'cerrado', 'cancelado']);
             $table->timestamps();
         });

@@ -3,6 +3,7 @@ import gestion_tickets_usuarios from "./components/gestion_tickets_usuarios.vue"
 import listas_historias from "./components/listas_historias.vue";
 import gestion_tickets from "./components/gestion_tickets.vue";
 import gestion_usuarios from "./components/gestion_usuarios.vue";
+import casa from "./components/home.vue";
 // descomentar apenas obtenga seguridad con sanctum
 import login from "./components/auth/LoginComponent.vue";
 
@@ -14,7 +15,12 @@ const routes = [
     {
         name: 'home',
         path: '/',
-        redirect: '/vue'  // Redirigir la raíz a la ruta '/vue'
+        redirect: '/casa'
+    },
+    {
+        name: 'casa',
+        path: '/casa',
+        component: casa
     },
     {
         name: 'gestion_tickets_usuarios',

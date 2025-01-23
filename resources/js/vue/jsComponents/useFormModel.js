@@ -135,7 +135,7 @@ export function useFormModel(modelType, defaultForm) {
         entidad_afectada,
         usuario_modificado_id: user_id,
         tickets_id: ticket_id,
-        user_id: null,
+        user_id: window.appData.user.id,
       };
   
       console.log("Datos enviados al modelo historias:", historiaData);

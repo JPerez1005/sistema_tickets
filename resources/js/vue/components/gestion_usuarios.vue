@@ -1,159 +1,157 @@
 <template>
-    <div>
-        <div class="container mt-5 ">
-            <div class="w-100 d-flex justify-center">
-                <div class="col-md-6 d-flex justify-content-center">
-                    <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                        Agregar
-                    </button>
-                </div>
-                <div class="col-md-6 d-flex justify-content-center">
-                    <button class="btn btn-outline-dark" @click="descargarUsuariosExcel">
-                        Descargar Usuarios (Excel)
-                    </button>
-                </div>
+    <div class="fondo min-vh-100">
+        <div class="w-100 d-flex justify-center">
+            <div class="col-md-6 d-flex justify-content-center mt-5">
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    Agregar
+                </button>
             </div>
-            <!-- Modal -->
-            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                        <h1 class="modal-title fs-5 text-dark" id="exampleModalLabel">Modal title</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <!-- Formulario de registro/edición de usuario -->
-                            <form @submit.prevent="enviar(editMode ? 'modificacion' : 'creacion')">
-                                
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div>
-                                            <label for="name" class="text-dark">Nombre:</label>
-                                            <br>
-                                            <input class="text-dark" type="text" id="name" v-model="form.name" required />
-                                        </div>
+            <div class="col-md-6 d-flex justify-content-center mt-5">
+                <button class="btn btn-dark" @click="descargarUsuariosExcel">
+                    Descargar Usuarios (Excel)
+                </button>
+            </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h1 class="modal-title fs-5 text-dark" id="exampleModalLabel">Modal title</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Formulario de registro/edición de usuario -->
+                        <form @submit.prevent="enviar(editMode ? 'modificacion' : 'creacion')">
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div>
+                                        <label for="name" class="text-dark">Nombre:</label>
                                         <br>
-                                        <div>
-                                            <label for="email" class="text-dark">Email:</label>
-                                            <br>
-                                            <input class="text-dark" type="email" id="email" v-model="form.email" required />
-                                        </div>
-                                        <br>
+                                        <input class="text-dark" type="text" id="name" v-model="form.name" required />
                                     </div>
-                                    <div class="col-md-6">
-                                        <div>
-                                            <label for="password" class="text-dark">Contraseña:</label>
-                                            <br>
-                                            <input class="text-dark" type="password" id="password" v-model="form.password" required />
-                                        </div>
+                                    <br>
+                                    <div>
+                                        <label for="email" class="text-dark">Email:</label>
                                         <br>
-                                        <div>
-                                            <label for="password_confirmation" class="text-dark">Confirmar Contraseña:</label>
-                                            <br>
-                                            <input class="text-dark" type="password" id="password_confirmation" v-model="form.password_confirmation" required />
-                                        </div>
+                                        <input class="text-dark" type="email" id="email" v-model="form.email" required />
                                     </div>
-                                    <div class="col-md-6">
+                                    <br>
+                                </div>
+                                <div class="col-md-6">
+                                    <div>
+                                        <label for="password" class="text-dark">Contraseña:</label>
                                         <br>
-                                        <div>
-                                            <label for="rol" class="text-dark">Rol:</label>
-                                            <select id="rol" v-model="form.rol" required>
-                                                <option value="administrador">Administrador</option>
-                                                <option value="soporte">Soporte</option>
-                                                <option value="usuario">Usuario</option>
-                                            </select>
-                                        </div>
+                                        <input class="text-dark" type="password" id="password" v-model="form.password" required />
                                     </div>
-                                    <div class="col-md-6">
+                                    <br>
+                                    <div>
+                                        <label for="password_confirmation" class="text-dark">Confirmar Contraseña:</label>
                                         <br>
-                                        <button type="submit" class="btn btn-outline-dark">{{ editMode ? 'Actualizar' : 'Registrar' }}</button>
-                                        <button type="button" class="btn btn-outline-dark" @click="recargar">cancelar</button>
+                                        <input class="text-dark" type="password" id="password_confirmation" v-model="form.password_confirmation" required />
                                     </div>
                                 </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="container mt-5 d-flex justify-content-center align-items-center flex-column">
-                <div class="row">
-                    <div class="col-md-10">
-                        <!-- Input de búsqueda -->
-                        <input
-                        v-model="search"
-                        @input="buscar"
-                        placeholder="Buscar usuarios"
-                        class="form-control mb-3"
-                        />
-                    </div>
-                    <div class="col-md-2">
-                        <!-- Controles de paginación -->
-                        <nav v-if="pagination.total > pagination.perPage">
-                            <ul class="pagination">
-                                <li
-                                v-for="page in Math.ceil(pagination.total / pagination.perPage)"
-                                :key="page"
-                                :class="{ active: page === pagination.currentPage }"
-                                class="page-item"
-                                >
-                                    <a @click.prevent="fetchPagina(page)" class="page-link" href="#">
-                                        {{ page }}
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div>
-                </div>
-                <div v-if="isMobile">
-                    <!-- Cards -->
-                    <div class="row">
-                        <div class="col-md-4" v-for="item in data" :key="item.id">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title">{{ item.name }}</h5>
-                                    <p class="card-text">{{ item.email }}</p>
-                                    <p class="card-text"><strong>Rol:</strong> {{ item.rol }}</p>
-                                    <button @click="editar(item.id)" class="btn btn-outline-dark"><i class="fa-solid fa-pen-to-square"></i></button>
-                                    <button @click="eliminar(item.id)" class="btn btn-outline-danger" ><i class="fa-solid fa-trash"></i></button>
+                                <div class="col-md-6">
+                                    <br>
+                                    <div>
+                                        <label for="rol" class="text-dark">Rol:</label>
+                                        <select id="rol" v-model="form.rol" required>
+                                            <option value="administrador">Administrador</option>
+                                            <option value="soporte">Soporte</option>
+                                            <option value="usuario">Usuario</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <br>
+                                    <button type="submit" class="btn btn-outline-dark">{{ editMode ? 'Actualizar' : 'Registrar' }}</button>
+                                    <button type="button" class="btn btn-outline-dark" @click="recargar">cancelar</button>
                                 </div>
                             </div>
-                            <br>
-                        </div>
+                        </form>
                     </div>
-                    
                 </div>
-                <div v-else>
-                    <!-- Tabla -->
-                    <table class="table table-bordered border-light table-success table-striped text-center w-75">
-                        <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Email</th>
-                                <th>Rol</th>
-                                <th>Modificar</th>
-                                <th>Eliminar</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="item in data" :key="item.id">
-                                <td>{{ item.name }}</td>
-                                <td>{{ item.email }}</td>
-                                <td>{{ item.rol }}</td>
-                                <td>
-                                    <button @click="editar(item.id)" class="btn btn-outline-dark"><i class="fa-solid fa-pen-to-square"></i></button>
-                                </td>
-                                <td>
-                                    <button @click="eliminar(item.id)" class="btn btn-outline-danger"><i class="fa-solid fa-trash"></i></button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+            </div>
+        </div>
+
+        <div class="container mt-5 d-flex justify-content-center align-items-center flex-column">
+            <div class="row">
+                <div class="col-md-10">
+                    <!-- Input de búsqueda -->
+                    <input
+                    v-model="search"
+                    @input="buscar"
+                    placeholder="Buscar usuarios"
+                    class="form-control mb-3"
+                    />
                 </div>
-        
+                <div class="col-md-2">
+                    <!-- Controles de paginación -->
+                    <nav v-if="pagination.total > pagination.perPage">
+                        <ul class="pagination">
+                            <li
+                            v-for="page in Math.ceil(pagination.total / pagination.perPage)"
+                            :key="page"
+                            :class="{ active: page === pagination.currentPage }"
+                            class="page-item"
+                            >
+                                <a @click.prevent="fetchPagina(page)" class="page-link" href="#">
+                                    {{ page }}
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            <div v-if="isMobile" class="container mt-5 d-flex justify-content-center align-items-center flex-column">
+                <!-- Cards -->
+                <div class="row">
+                    <div class="col-md-4" v-for="item in data" :key="item.id">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ item.name }}</h5>
+                                <p class="card-text">{{ item.email }}</p>
+                                <p class="card-text"><strong>Rol:</strong> {{ item.rol }}</p>
+                                <button @click="editar(item.id)" class="btn btn-outline-dark"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button @click="eliminar(item.id)" class="btn btn-outline-danger" ><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+                </div>
                 
             </div>
+            <div v-else class="container mt-5 d-flex justify-content-center align-items-center flex-column">
+                <!-- Tabla -->
+                <table class="table table-bordered border-light table-success table-striped text-center w-75">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Email</th>
+                            <th>Rol</th>
+                            <th>Modificar</th>
+                            <th>Eliminar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="item in data" :key="item.id">
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.email }}</td>
+                            <td>{{ item.rol }}</td>
+                            <td>
+                                <button @click="editar(item.id)" class="btn btn-outline-dark"><i class="fa-solid fa-pen-to-square"></i></button>
+                            </td>
+                            <td>
+                                <button @click="eliminar(item.id)" class="btn btn-outline-danger"><i class="fa-solid fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+    
+            
         </div>
     </div>
 </template>

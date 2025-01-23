@@ -65,6 +65,10 @@ class MultiModelController extends Controller
                 $query->where('usuario_creacion', $user->id);
             }
         }
+
+        if ($type == 'historias') {
+            $query->orderBy('created_at', 'desc');
+        }
         
 
         if ($request->has('search')) {
@@ -75,6 +79,8 @@ class MultiModelController extends Controller
                 $query->where('titulo', 'like', "%{$search}%");
             } elseif ($type === 'users') {
                 $query->where('name', 'like', "%{$search}%");
+            }elseif ($type === 'historias') {
+                $query->where('accion', 'like', "%{$search}%");
             }
         }
 
@@ -135,14 +141,14 @@ class MultiModelController extends Controller
             }
         }
 
-        if ($type == 'tickets') {
-            $user = Auth::user(); // Obtiene el usuario autenticado
-            $allowed = Gate::allows('permisoAdministradorYSoporte', $user);
+        // if ($type == 'tickets') {
+        //     $user = Auth::user(); // Obtiene el usuario autenticado
+        //     $allowed = Gate::allows('permisoAdministradorYSoporte', $user);
 
-            if (!$allowed) {
-                return response()->json(['message' => 'Unauthorized'], 401);
-            }
-        }
+        //     if (!$allowed) {
+        //         return response()->json(['message' => 'Unauthorized'], 401);
+        //     }
+        // }
 
         $instance = $model::findOrFail($id);
         $validatedData = $request->validate($model::validationRules());

@@ -1,15 +1,14 @@
 <template>
-    <div>
-        <div class="container mt-5 ">
+    <div class="fondo min-vh-100">
             <div class="w-100 d-flex justify-center">
-                <div class="col-md-6 d-flex justify-content-center">
+                <div class="col-md-6 d-flex justify-content-center mt-5">
                     <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#exampleModal">
                         Agregar
                     </button>
                 </div>
-                <div class="col-md-6 d-flex justify-content-center">
-                    <button class="btn btn-outline-dark" @click="descargarTicketsExcel">
+                <div class="col-md-6 d-flex justify-content-center mt-5">
+                    <button class="btn btn-dark" @click="descargarTicketsExcel">
                         Descargar Tickets (Excel)
                     </button>
                 </div>
@@ -103,7 +102,7 @@
                         </nav>
                     </div>
                 </div>
-                <div v-if="isMobile">
+                <div v-if="isMobile" class="container mt-5 d-flex justify-content-center align-items-center flex-column">
                     <!-- Cards -->
                     <div class="row">
                         <div class="col-md-4" v-for="item in data" :key="item.id">
@@ -127,7 +126,7 @@
                     </div>
                     
                 </div>
-                <div v-else>
+                <div v-else class="container mt-5 d-flex justify-content-center align-items-center flex-column">
                     <!-- Tabla -->
                     <table class="table table-bordered border-light table-success table-striped text-center w-75">
                         <thead>
@@ -163,7 +162,6 @@
         
                 
             </div>
-        </div>
     </div>
 </template>
   

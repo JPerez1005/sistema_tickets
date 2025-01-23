@@ -1,49 +1,30 @@
 <template>
 
-  <ul class="nav justify-content-center align-items-center" v-if="isLoggedIn">
-    <!-- Opción general -->
-    <li class="nav-item" v-if="user && user.rol === 'usuario'">
-      <router-link :to="{name: 'gestion_tickets_usuarios'}" class="nav-link">Gestion Tickets (u)</router-link>
-    </li>
-  
-    <!-- Opciones específicas para administradores -->
+    <ul class="nav justify-content-center align-items-center" v-if="isLoggedIn">
+      <!-- Opción general -->
+      <li class="nav-item" v-if="user && user.rol === 'usuario'">
+        <router-link :to="{name: 'gestion_tickets_usuarios'}" class="nav-link">Gestion Tickets (u)</router-link>
+      </li>
     
-    <li class="nav-item" v-if="user && user.rol === 'administrador'">
-      <router-link :to="{name: 'listas_historias'}" class="nav-link">Listas de historias</router-link>
-    </li>
-    <li class="nav-item" v-if="user && user.rol === 'administrador'">
-      <router-link :to="{name: 'gestion_usuarios'}" class="nav-link">Gestión de Usuarios</router-link>
-    </li>
-  
-    <!-- Opciones para administrador y soporte -->
-    <li class="nav-item" v-if="user && (user.rol === 'administrador' || user.rol === 'soporte')">
-      <router-link :to="{name: 'gestion_tickets'}" class="nav-link">Gestión de Tickets</router-link>
-    </li>
-  
-    <!-- Opción de cerrar sesión -->
-    <li class="nav-item">
-      <a class="nav-link text-light" href="#" @click.prevent="logout">Cerrar sesión</a>
-    </li>
-  </ul>
-  
-  
-
-    <!-- <div v-if="isLoggedIn">
+      <!-- Opciones específicas para administradores -->
       
-      <br><router-link :to="{name:'registrar_tickets'}" class="inicio">Registros de tickets</router-link>
-      
-      
-      <div v-if="user && user.rol === 'administrador'">
-        <router-link :to="{name:'listas_usuarios'}" class="inicio">Listas de usuarios</router-link>
-        <br><router-link :to="{name:'registrar_usuarios'}" class="inicio">Registros de usuarios</router-link>
-        <br><router-link :to="{name:'listas_historias'}" class="inicio">Listas de historias</router-link>
-        <br><router-link :to="{name:'gestion_usuarios'}" class="inicio">Gestión de Usuarios</router-link>
-      </div>
-      <div v-if="user && (user.rol === 'administrador' || user.rol === 'soporte')">
-        <router-link :to="{name:'listas_tickets'}" class="inicio">Listas de tickets</router-link>
-        <br><router-link :to="{name:'gestion_tickets'}" class="inicio">Gestión de Tickets</router-link>
-      </div>
-    </div> -->
+      <li class="nav-item" v-if="user && user.rol === 'administrador'">
+        <router-link :to="{name: 'listas_historias'}" class="nav-link">Listas de historias</router-link>
+      </li>
+      <li class="nav-item" v-if="user && user.rol === 'administrador'">
+        <router-link :to="{name: 'gestion_usuarios'}" class="nav-link">Gestión de Usuarios</router-link>
+      </li>
+    
+      <!-- Opciones para administrador y soporte -->
+      <li class="nav-item" v-if="user && (user.rol === 'administrador' || user.rol === 'soporte')">
+        <router-link :to="{name: 'gestion_tickets'}" class="nav-link">Gestión de Tickets</router-link>
+      </li>
+    
+      <!-- Opción de cerrar sesión -->
+      <li class="nav-item">
+        <a class="nav-link text-light" href="#" @click.prevent="logout">Cerrar sesión</a>
+      </li>
+    </ul>
   
     <router-view></router-view>
   </template>
@@ -63,16 +44,17 @@
     },
     mounted() {
         console.log(window.appData);
-      if (!window.appData || !window.appData.isLoggedIn) {
-        localStorage.removeItem('auth_token');
-        this.isLoggedIn = false;
-        this.user = null;
-        this.token = null;
-      } else {
-        this.isLoggedIn = window.appData.isLoggedIn;
-        this.user = window.appData.user;
-        this.token = window.appData.token;
-      }
+        if (!window.appData || !window.appData.isLoggedIn) {
+          localStorage.removeItem('auth_token');
+          this.isLoggedIn = false;
+          this.user = null;
+          this.token = null;
+
+        } else {
+          this.isLoggedIn = window.appData.isLoggedIn;
+          this.user = window.appData.user;
+          this.token = window.appData.token;
+        }
   
       // Verifica si hay un token en localStorage
       const token = localStorage.getItem('auth_token');
@@ -96,8 +78,7 @@
       } else {
         this.isLoggedIn = false;
         console.log('No hay token, el usuario no está autenticado.');
-        this.$router.push({ name: 'login' }); // Redirige a la página de login
-        throw new Error('No estás autenticado, redirigiendo al login.');
+        this.$router.push({ name: 'login' });
       }
     },
     methods: {

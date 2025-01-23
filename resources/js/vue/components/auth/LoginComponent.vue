@@ -3,10 +3,10 @@
         
         <div class="row g-0">
             <div class="col-lg-7 d-none d-lg-block">
-                <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="true">
+                <div id="carouselExampleIndicators2" class="carousel slide" data-bs-ride="true">
                     <div class="carousel-indicators">
-                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                        <button type="button" data-bs-target="#carouselExampleIndicators2" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                        <button type="button" data-bs-target="#carouselExampleIndicators2" data-bs-slide-to="1" aria-label="Slide 2"></button>
                     </div>
                     <div class="carousel-inner">
                         <div class="carousel-item img-1 min-vh-100 active">
@@ -17,11 +17,11 @@
                             <!-- <img class="d-block w-100" :src="assetUrl" alt="imagen"> -->
                         </div>
                     </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators2" data-bs-slide="prev">
                         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                         <span class="visually-hidden">Previous</span>
                     </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators2" data-bs-slide="next">
                         <span class="carousel-control-next-icon" aria-hidden="true"></span>
                         <span class="visually-hidden">Next</span>
                     </button>
@@ -58,7 +58,6 @@ import { useGenericStore } from '../../store/useGenericStore.js';
 export default {
     data() {
         return {
-            // assetUrl: "http://127.0.0.1:8000/imagenes/secretaria.jpg",
             form: {
                 email: '',
                 password: '',
@@ -72,6 +71,7 @@ export default {
         console.log("estás autenticado?:" + this.$root.isLoggedIn);
         if (this.$root.isLoggedIn) {
             this.$router.push({ name: 'home' });
+            // window.location.href = '/home';
             return null;
         } else {
             this.$router.push({ name: 'login' });

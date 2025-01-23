@@ -10,7 +10,3 @@ Route::get('/vue', function () {
 Route::middleware(['web'])->group(function () {
     Route::post('/api/user/login', [UserController::class, 'login']);
 });
-
-// Route::get('/', function () {
-//     return redirect('/vue');
-// })->name('home');

@@ -1,50 +1,39 @@
 <template>
-    <div>
-        <div class="container mt-5 ">
+    <div class="fondo min-vh-100">
             <div class="w-100 d-flex justify-center">
-                <div class="col-md-6 d-flex justify-content-center">
-                    <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                        Agregar
-                    </button>
-                </div>
             </div>
             <!-- Modal -->
             <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
+                <div class="modal-dialog modal-sm">
                     <div class="modal-content">
                         <div class="modal-header">
-                        <h1 class="modal-title fs-5 text-dark" id="exampleModalLabel">Modal title</h1>
+                        <h1 class="modal-title fs-5 text-dark" id="exampleModalLabel">
+                            Solicitar Ticket
+                        </h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             <!-- Formulario de registro/edición de usuario -->
-                            <form @submit.prevent="enviar(editMode ? 'modificacion' : 'creacion')">
+                            <form @submit.prevent="enviar(editMode ? 'modificacion' : 'creacion')" >
                                 
                                 <div class="row">
-                                    <div class="col-md-12">
-                                        <div>
-                                            <label for="titulo" class="text-dark">Titulo:</label>
-                                            <br>
-                                            <input class="text-dark" type="text" id="titulo" v-model="form.titulo" required />
-                                        </div>
-                                        <br>
-                                        <div>
-                                            <label for="descripcion" class="text-dark">Descripcion:</label>
-                                            <br>
-                                            <textarea class="text-dark" type="descripcion" id="descripcion" v-model="form.descripcion" required/>
-                                        </div>
-                                        <br>
-                                        <div>
-                                            <label for="estado" class="text-dark">Estado:</label>
-                                            <select id="estado" v-model="form.estado" required>
-                                                <option value="abierto">Abrir</option>
-                                                <option value="cancelado">Cancelar</option>
-                                            </select>
-                                        </div>
+                                    <div class="d-flex justify-center align-items-center flex-column ">
+                                        <label for="titulo" class="text-dark">Titulo:</label>
+                                        <input class="text-dark" type="text" id="titulo" v-model="form.titulo" required />
                                     </div>
-                                    <div class="col-md-6">
-                                        <br>
+                                    <br>
+                                    <div class="d-flex justify-center align-items-center flex-column mt-3">
+                                        <label for="descripcion" class="text-dark">Descripcion:</label>
+                                        <textarea class="text-dark" type="descripcion" id="descripcion" v-model="form.descripcion" required/>
+                                    </div>
+                                    <div class="d-flex justify-center align-items-center flex-column mt-3">
+                                        <label for="estado" class="text-dark">Estado:</label>
+                                        <select id="estado" v-model="form.estado" required>
+                                            <option value="abierto">Abrir</option>
+                                            <option value="cancelado">Cancelar</option>
+                                        </select>
+                                    </div>
+                                    <div class="w-100 d-flex flex-row-reverse justify-center align-items-center mt-5">
                                         <button type="submit" class="btn btn-outline-dark">{{ editMode ? 'Actualizar' : 'Registrar' }}</button>
                                         <button type="button" class="btn btn-outline-dark" @click="recargar">cancelar</button>
                                     </div>
@@ -56,8 +45,13 @@
             </div>
 
             <div class="container mt-5 d-flex justify-center align-items-center flex-column ">
-                <div class="row">
-                    <div class="col-md-10">
+                <div class="row w-100">
+                    <div class="col-md-4">
+                        <button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            Agregar
+                        </button>
+                    </div>
+                    <div class="col-md-4">
                         <!-- Input de búsqueda -->
                         <input
                         v-model="search"
@@ -66,23 +60,25 @@
                         class="form-control mb-3"
                         />
                     </div>
-                    <!-- Controles de paginación -->
-                    <nav v-if="pagination.total > pagination.perPage">
-                        <ul class="pagination">
-                            <li
-                            v-for="page in Math.ceil(pagination.total / pagination.perPage)"
-                            :key="page"
-                            :class="{ active: page === pagination.currentPage }"
-                            class="page-item"
-                            >
-                                <a @click.prevent="fetchPagina(page)" class="page-link" href="#">
-                                    {{ page }}
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
+                    <div class="col-md-4">
+                        <!-- Controles de paginación -->
+                        <nav v-if="pagination.total > pagination.perPage">
+                            <ul class="pagination">
+                                <li
+                                v-for="page in Math.ceil(pagination.total / pagination.perPage)"
+                                :key="page"
+                                :class="{ active: page === pagination.currentPage }"
+                                class="page-item"
+                                >
+                                    <a @click.prevent="fetchPagina(page)" class="page-link" href="#">
+                                        {{ page }}
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
                 </div>
-                <div v-if="isMobile">
+                <div v-if="isMobile" class="container mt-5 d-flex justify-content-center align-items-center flex-column">
                     <!-- Cards -->
                     <div class="row">
                         <div class="col-md-4" v-for="item in data" :key="item.id">
@@ -106,7 +102,7 @@
                     </div>
                     
                 </div>
-                <div v-else>
+                <div v-else class="container mt-5 d-flex justify-content-center align-items-center flex-column">
                     <!-- Tabla -->
                     <table class="table table-bordered border-light table-success table-striped text-center w-75">
                         <thead>
@@ -142,7 +138,6 @@
         
                 
             </div>
-        </div>
     </div>
 </template>
   

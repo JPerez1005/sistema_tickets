@@ -137,7 +137,7 @@ export function useFormModel(modelType, defaultForm) {
         tickets_id: ticket_id,
         user_id: window.appData.user.id,
       };
-  
+      window.location.reload();
       console.log("Datos enviados al modelo historias:", historiaData);
   
       const historiaStore = useGenericStore();

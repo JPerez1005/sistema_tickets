@@ -18,13 +18,13 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5 text-dark" id="exampleModalLabel">Modal title</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h1 class="modal-title fs-5 text-dark" id="exampleModalLabel">Modal title</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <!-- Formulario de registro/edición de usuario -->
                         <form @submit.prevent="enviar(editMode ? 'modificacion' : 'creacion')">
-
+                            
                             <div class="row">
                                 <div class="col-md-6">
                                     <div>
@@ -36,8 +36,7 @@
                                     <div>
                                         <label for="email" class="text-dark">Email:</label>
                                         <br>
-                                        <input class="text-dark" type="email" id="email" v-model="form.email"
-                                            required />
+                                        <input class="text-dark" type="email" id="email" v-model="form.email" required />
                                     </div>
                                     <br>
                                 </div>
@@ -45,16 +44,13 @@
                                     <div>
                                         <label for="password" class="text-dark">Contraseña:</label>
                                         <br>
-                                        <input class="text-dark" type="password" id="password" v-model="form.password"
-                                            required />
+                                        <input class="text-dark" type="password" id="password" v-model="form.password" required />
                                     </div>
                                     <br>
                                     <div>
-                                        <label for="password_confirmation" class="text-dark">Confirmar
-                                            Contraseña:</label>
+                                        <label for="password_confirmation" class="text-dark">Confirmar Contraseña:</label>
                                         <br>
-                                        <input class="text-dark" type="password" id="password_confirmation"
-                                            v-model="form.password_confirmation" required />
+                                        <input class="text-dark" type="password" id="password_confirmation" v-model="form.password_confirmation" required />
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -70,10 +66,8 @@
                                 </div>
                                 <div class="col-md-6">
                                     <br>
-                                    <button type="submit" class="btn btn-outline-dark">{{ editMode ? 'Actualizar' :
-                                        'Registrar' }}</button>
-                                    <button type="button" class="btn btn-outline-dark"
-                                        @click="recargar">cancelar</button>
+                                    <button type="submit" class="btn btn-outline-dark">{{ editMode ? 'Actualizar' : 'Registrar' }}</button>
+                                    <button type="button" class="btn btn-outline-dark" @click="recargar">cancelar</button>
                                 </div>
                             </div>
                         </form>
@@ -87,7 +81,11 @@
                 <!-- Campo de Búsqueda -->
                 <div class="mb-3 w-100">
                     <!-- Input de búsqueda -->
-                    <input v-model="search" placeholder="Buscar acciones" class="form-control mb-3" />
+                    <input
+                        v-model="search"
+                        placeholder="Buscar acciones"
+                        class="form-control mb-3"
+                    />
                 </div>
                 <!-- Cards -->
                 <div class="row">
@@ -106,20 +104,19 @@
                 </div>
             </div>
             <div v-else id="container-tabla">
-
-
+                
+    
                 <div id="tabla2" class="text-dark p-3">
                     <!-- Tabla con DataTables -->
-                    <DataTable id="tabla" :columns="columns" :data="filteredData" :options="tableOptions"
-                        class="display w-100 text-light" />
+                    <DataTable id="tabla" :columns="columns" :data="filteredData" :options="tableOptions" class="display w-100 text-light" />
                 </div>
             </div>
-
-
+    
+            
         </div>
     </div>
 </template>
-
+  
 <script setup>
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net';
@@ -127,7 +124,6 @@ import { useListModel, useFormModel } from '../jsComponents/conexionModelos.js';
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue';
 import * as XLSX from 'xlsx';
 import { useRouter, useRoute } from 'vue-router';
-import $ from 'jquery';
 
 DataTable.use(DataTablesCore);
 
@@ -135,14 +131,14 @@ const { data, isLoading, search } = useListModel('user');
 const dataTable = ref([]);
 
 const columns = [
-    { data: 'name', title: 'Nombre' , defaultContent: ''},
-    { data: 'email', title: 'Correo Electrónico', defaultContent: '' },
-    { data: 'rol', title: 'Rol', defaultContent: '' },
-    { data: 'created_at', title: 'Fecha de Creación', defaultContent: '' },
+    { data: 'name', title: 'Nombre' },
+    { data: 'email', title: 'Correo Electrónico' },
+    { data: 'rol', title: 'Rol' },
+    { data: 'created_at', title: 'Fecha de Creación' },
     {
         title: 'Acciones',
         render: (data, type, row) => `
-            <button class="btn btn-primary btn-sm edit-btn" data-id="${row.id}">Editar</button>
+            <button class="btn btn-primary btn-sm edit-btn" @click="editar(item.id)">Editar</button>
             <button class="btn btn-danger btn-sm delete-btn" data-id="${row.id}">Eliminar</button>
         `
     }
@@ -188,15 +184,14 @@ const fetchUser = async (id) => {
     const user = await fetchPagina(id);
     form.name = user.name;
     form.email = user.email;
-    form.password = '';
-    form.password_confirmation = '';
+    form.password = ''; 
+    form.password_confirmation = ''; 
     form.rol = user.rol;
 };
 
 
 const enviarUsuario = async (accion) => {
     try {
-        console.log("enviando datos");
         await enviar(accion);
         window.location.reload();
     } catch (error) {
@@ -215,54 +210,12 @@ const checkScreenSize = () => {
     isMobile.value = window.innerWidth <= 1023;
 };
 
-const recargar = () => {
-    console.log("Botón Cancelar presionado");
-    
-    const modal = new bootstrap.Modal(document.getElementById('exampleModal'));
-    modal.hide();
-
-    window.location.reload();
-};
-
 onMounted(() => {
     checkScreenSize();
     window.addEventListener('resize', checkScreenSize);
-
-    // Verificar si DataTable ya está inicializado
-    if (!$.fn.DataTable.isDataTable('#tabla')) {
-        // Inicializar DataTable
-        $('#tabla').DataTable({
-            columns,
-            data: filteredData.value,
-            ...tableOptions,
-        });
-    } else {
-        // Si ya está inicializado, solo actualizar los datos
-        const table = $('#tabla').DataTable();
-        table.clear();
-        table.rows.add(filteredData.value);
-        table.draw();
-    }
-
-    // Delegar eventos de "Editar" y "Eliminar" al contenedor
-    $('#tabla').on('click', '.edit-btn', function (event) {
-        const id = $(this).data('id'); // Usar jQuery para obtener el atributo 'data-id'
-        editar(id);
-    });
-
-    $('#tabla').on('click', '.delete-btn', function (event) {
-        const id = $(this).data('id'); // Usar jQuery para obtener el atributo 'data-id'
-        eliminar(id);
-    });
 });
 
 onBeforeUnmount(() => {
     window.removeEventListener('resize', checkScreenSize);
-    // Destruir DataTable para liberar recursos
-    if ($.fn.DataTable.isDataTable('#tabla')) {
-        $('#tabla').DataTable().destroy();
-    }
 });
-
-
 </script>

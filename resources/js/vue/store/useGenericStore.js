@@ -1,4 +1,3 @@
-// src/stores/GenericStore.js
 import { defineStore } from 'pinia';
 import axios from 'axios';
 import $ from 'jquery';
@@ -71,13 +70,6 @@ export const useGenericStore = defineStore('generic', {
     },
   
     async fetchData() {
-      if (!this.token) {
-        console.error('No se encontró el token en el estado global.');
-        this.setData(null);
-        window.location.href = '/vue#/login';
-        return;
-      }
-    
       if (!this.modelType) {
         throw new Error("Model type is not set");
       }
@@ -85,37 +77,22 @@ export const useGenericStore = defineStore('generic', {
       this.isLoading = true;
     
       try {
-        const response = await new Promise((resolve, reject) => {
-          $.ajax({
-            url: `${this.url}${this.modelType}/all`,
-            type: 'GET',
-            headers: {
-              Authorization: `Bearer ${this.token}`,
-            },
-            success: function (data) {
-              resolve(data);
-            },
-            error: function (xhr) {
-              // Si el código de estado es 401, redirigir al inicio de sesión
-              if (xhr.status === 401) {
-                console.warn('Usuario no autorizado, redirigiendo....');
-                alert("no tienes permisos");
-                window.location.href = '/vue#/login';
-              } else {
-                // Rechazar el error para manejarlo en el catch
-                reject(new Error(`Error: ${xhr.status} - ${xhr.statusText}`));
-              }
-            },
-          });
+        const response = await axios.get(`${this.url}${this.modelType}/all`, {
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
         });
     
-        this.setData(response);
+        // Verifica que los datos están en response.data
+        console.log('Datos obtenidos:', response.data);
+    
+        this.data = response.data || []; // Aquí asignamos los datos
       } catch (error) {
-        console.error(`Error al cargar ${this.modelType}:`, error);
+        console.error("Error al obtener los datos:", error);
       } finally {
         this.isLoading = false;
       }
-    }
+    }    
     ,
     async eliminarItem(id) {
       if (!this.modelType) throw new Error("Model type is not set");

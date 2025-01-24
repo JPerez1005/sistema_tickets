@@ -1,4 +1,5 @@
-import { ref, onMounted, computed, useGenericStore } from './conexionModelos.js';
+import { ref, onMounted, computed } from './conexionModelos.js';
+import { useGenericStore } from '../store/useGenericStore.js'; // Asegúrate de importar tu store correctamente
 
 export function useListModel(modelType) {
   const store = useGenericStore();
@@ -6,10 +7,13 @@ export function useListModel(modelType) {
 
   store.setModelType(modelType);
 
+  // Hacer la llamada para obtener los datos en el montaje del componente
   onMounted(() => {
     store.fetchData();
+    console.log(store);
   });
 
+  // Usamos `computed` para acceder a `store.data` de manera reactiva
   const data = computed(() => store.data);
   const isLoading = computed(() => store.isLoading);
   const pagination = computed(() => store.pagination);

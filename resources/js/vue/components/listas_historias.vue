@@ -1,186 +1,123 @@
 <template>
-  <div class="fondo min-vh-100">
-          <div class="w-100 d-flex justify-content-center">
-            <div class="container mt-5 d-flex justify-content-center align-items-center flex-column">
-                <div class="row w-90">
-                    <div class="col-md-4">
-                        <button class="btn btn-dark" @click="descargarHistoriasExcel">
-                            Descargar Historias (Excel)
-                        </button>
-                    </div>
-                    <div class="col-md-4">
-                        
-                        <!-- Input de búsqueda -->
-                        <input
-                        v-model="search"
-                        @input="buscar"
-                        placeholder="Buscar acciones"
-                        class="form-control mb-3"
-                        />
-                    </div>
-                    <div class="col-md-4">
-                        <!-- Controles de paginación -->
-                        <nav v-if="pagination.total > pagination.perPage">
-                            <ul class="pagination">
-                                <li
-                                v-for="page in Math.ceil(pagination.total / pagination.perPage)"
-                                :key="page"
-                                :class="{ active: page === pagination.currentPage }"
-                                class="page-item"
-                                >
-                                    <a @click.prevent="fetchPagina(page)" class="page-link" href="#">
-                                        {{ page }}
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div>
-
-                    
-                </div>
-                <div v-if="isMobile" class="container mt-5 d-flex justify-content-center align-items-center flex-column">
-                    <!-- Cards -->
-                    <div class="row">
-                        <div class="col-md-4" v-for="item in data" :key="item.id">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title">{{ item.accion }}</h5>
-                                    <p class="card-text">{{ item.descripcion }}</p>
-                                    <p class="card-text"><strong>Entidad:</strong> {{ item.entidad_afectada }}</p>
-                                    <p class="card-text"><strong>Usuario Modificado:</strong> {{ item.usuario_modificado_id }}</p>
-                                    <p class="card-text"><strong>ID del Ticket:</strong> {{ item.tickets_id }}</p>
-                                    <p class="card-text"><strong>ID del Usuario:</strong> {{ item.user_id }}</p>
-                                </div>
-                            </div>
-                            <br>
+    <div class=" fondo w-100 d-flex flex-column justify-content-center align-items-center min-vh-100">
+        <!-- Botón de Exportación a Excel -->
+        <button @click="exportToExcel" class=" mt-5 btn btn-dark mb-3">Exportar a Excel</button>
+        <div v-if="isMobile" class="container mt-5 d-flex justify-content-center align-items-center flex-column">
+            <!-- Campo de Búsqueda -->
+            <div class="mb-3 w-100">
+                <!-- Input de búsqueda -->
+                <input
+                    v-model="search"
+                    placeholder="Buscar acciones"
+                    class="form-control mb-3"
+                />
+            </div>
+            <!-- Cards -->
+            <div class="row">
+                <div class="col-md-4" v-for="item in filteredData" :key="item.id">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ item.accion }}</h5>
+                            <p class="card-text">{{ item.descripcion }}</p>
+                            <p class="card-text"><strong>Entidad:</strong> {{ item.entidad_afectada }}</p>
+                            <p class="card-text"><strong>Usuario Modificado:</strong> {{ item.usuario_modificado_id }}</p>
+                            <p class="card-text"><strong>ID del Ticket:</strong> {{ item.tickets_id }}</p>
+                            <p class="card-text"><strong>ID del Usuario:</strong> {{ item.user_id }}</p>
                         </div>
                     </div>
-                    
+                    <br>
                 </div>
-                <div v-else class="container mt-5 d-flex justify-content-center align-items-center flex-column">
-                    <!-- Tabla -->
-                    <table class="table table-bordered border-light table-success table-striped text-center w-75">
-                        <thead>
-                            <tr>
-                                <th>Acción</th>
-                                <th>Descripción</th>
-                                <th>Entidad Afectada</th>
-                                <th>Usuario Modificado</th>
-                                <th>ID del Ticket</th>
-                                <th>ID del Usuario</th>
-                                <th>Fecha de Creación</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="item in data" :key="item.id">
-                                <td>{{ item.accion }}</td>
-                                <td>{{ item.descripcion }}</td>
-                                <td>{{ item.entidad_afectada }}</td>
-                                <td>{{ item.usuario_modificado_id }}</td>
-                                <td>{{ item.tickets_id }}</td>
-                                <td>{{ item.user_id }}</td>
-                                <td>{{ item.created_at }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-        
-                
             </div>
-          </div>
-  </div>
+        </div>
+        <div v-else id="container-tabla">
+            
+
+            <div id="tabla2" class="text-dark p-3">
+                <!-- Tabla con DataTables -->
+                <DataTable id="tabla" :columns="columns" :data="filteredData" :options="tableOptions" class="display w-100 text-light" />
+            </div>
+        </div>
+    </div>
 </template>
+<script setup lang="ts">
+import DataTable from 'datatables.net-vue3'; // Importar el componente de DataTables para Vue 3
+import DataTablesCore from 'datatables.net'; // Importar la funcionalidad base de DataTables
+import { useListModel } from '../jsComponents/conexionModelos.js';
+import { ref, computed, watch, onBeforeUnmount, onMounted } from 'vue';
+import * as XLSX from 'xlsx'; // Importar la librería de Excel
 
-<script>
-  import { useListModel2, useFormModel } from '../jsComponents/conexionModelos.js';
-  import { useRouter, useRoute } from 'vue-router';
-  import { ref, onMounted, onBeforeUnmount } from 'vue';
-  import * as XLSX from 'xlsx';
+// Activar DataTables con su núcleo
+DataTable.use(DataTablesCore);
 
-  export default {
-      setup() {
+// Composables
+const { data, isLoading, search } = useListModel('historias'); // Datos desde el modelo
+const dataTable = ref([
+  {
+    accion: "",
+    descripcion: "",
+    entidad_afectada: "",
+    usuario_modificado_id: "",
+    tickets_id: "",
+    user_id: "",
+    created_at: ""
+  }
+]); //datos predefinidos
 
-          const descargarHistoriasExcel = async () => {
-              try {
-                  const token = localStorage.getItem('auth_token'); // Obtener el token desde localStorage
-                  if (!token) {
-                      console.error('No se encontró el token de autenticación');
-                      return;
-                  }
+const columns = [
+  { data: 'accion', title: 'Acción', defaultContent: '' },
+  { data: 'descripcion', title: 'Descripción', defaultContent: '' },
+  { data: 'entidad_afectada', title: 'Entidad Afectada', defaultContent: '' },
+  { data: 'usuario_modificado_id', title: 'Usuario Modificado', defaultContent: '' },
+  { data: 'tickets_id', title: 'ID del Ticket', defaultContent: '' },
+  { data: 'user_id', title: 'ID del Usuario', defaultContent: '' },
+  { data: 'created_at', title: 'Fecha de Creación', defaultContent: '' },
+];
 
-                  const response = await fetch('/api/historias/all', {
-                      method: 'GET',
-                      headers: {
-                          'Content-Type': 'application/json',
-                          'Authorization': `Bearer ${token}` // Incluir el token en el encabezado
-                      },
-                  });
+const tableOptions = {
+    pageLength: 3, 
+    lengthMenu: [3, 5, 10, 20, 50], // selector
+};
 
-                  if (!response.ok) {
-                      console.error('Error en la respuesta de la API:', response.status, response.statusText);
-                      return;
-                  }
+const filteredData = computed(() => {
+    if (!search.value) {
+        return data.value; // si no hay texto mostrar todo
+    }
+    return data.value.filter((item: any) => {
+        const searchLower = search.value.toLowerCase();
+        return (//buscar según ..
+            item.accion.toLowerCase().includes(searchLower) ||
+            item.descripcion.toLowerCase().includes(searchLower) ||
+            item.entidad_afectada.toLowerCase().includes(searchLower)
+        );
+    });
+});
 
-                  const data = await response.json();
+watch(filteredData, (newData) => {
+    dataTable.value = newData;//actualizar datos
+});
 
-                  if (!Array.isArray(data)) {
-                      console.error('Los datos recibidos no son válidos:', data);
-                      return;
-                  }
+const exportToExcel = () => {
+    // Convertir los datos a formato adecuado para Excel
+    const worksheet = XLSX.utils.json_to_sheet(filteredData.value);// usar datos filtrados
+    const workbook = XLSX.utils.book_new();// crear un nuevo libro
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Historias');// agregar la hoja a un libro
 
-                  const worksheetData = data.map(item => ({
-                      Acción: item.accion,
-                      Descripción: item.descripcion,
-                      'Entidad Afectada': item.entidad_afectada,
-                      'Usuario Modificado': item.usuario_modificado_id,
-                      'ID del Ticket': item.tickets_id,
-                      'ID del Usuario': item.user_id,
-                      'Fecha de Creación': item.created_at,
-                  }));
+    XLSX.writeFile(workbook, 'historias.xlsx');//nombrarlo
+};
 
-                  const worksheet = XLSX.utils.json_to_sheet(worksheetData);
-                  const workbook = XLSX.utils.book_new();
-                  XLSX.utils.book_append_sheet(workbook, worksheet, 'Usuarios');
-                  XLSX.writeFile(workbook, 'usuarios.xlsx');
-              } catch (error) {
-                  console.error('Error al generar el archivo Excel:', error);
-              }
-          };
+const isMobile = ref(false);
 
-          const isMobile = ref(false);
+// para adaptar la pantalla
+const checkScreenSize = () => {
+    isMobile.value = window.innerWidth <= 1023;
+};
 
-          // Función para detectar el tamaño de la pantalla
-          const checkScreenSize = () => {
-              isMobile.value = window.innerWidth <= 768; // 768px o el tamaño que prefieras
-          };
+onMounted(() => {
+    checkScreenSize(); //verificar el tamaño del componente
+    window.addEventListener('resize', checkScreenSize); //escuchar cambios en pantalla
+});
 
-          onMounted(() => {
-              checkScreenSize(); // Verificar el tamaño al montar el componente
-              window.addEventListener('resize', checkScreenSize); // Escuchar cambios en el tamaño
-          });
-
-          onBeforeUnmount(() => {
-              window.removeEventListener('resize', checkScreenSize); // Limpiar el evento al desmontar
-          });
-
-          const router = useRouter();
-          const route = useRoute();
-
-          const { data, isLoading, pagination, fetchPagina, eliminar, search, buscar,fetchData } =
-          useListModel2('historias');
-
-          return {
-              isMobile,
-              data,
-              isLoading,
-              pagination,
-              fetchPagina,
-              eliminar,
-              search,
-              buscar,
-              fetchData,
-              descargarHistoriasExcel,
-          };
-      },
-  };
+onBeforeUnmount(() => {
+    window.removeEventListener('resize', checkScreenSize); // Limpiar el evento cuando se desmonte
+});
 </script>

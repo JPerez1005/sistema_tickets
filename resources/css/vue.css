@@ -15,6 +15,13 @@
     background-color: var(--oscuro-x) !important;
 }
 
+.bg-light{
+    background-color: var(--luz);
+    color: var(--oscuro);
+    font-size: large;
+    font-weight: 300;
+}
+
 body{
     color: var(--luz);
     font-weight: 300;
@@ -99,4 +106,28 @@ input {
     background-image: url('https://images.pexels.com/photos/753873/pexels-photo-753873.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2');
     background-size: cover;
     background-position: center;
+}
+
+@import 'datatables.net-dt';
+
+#tabla{
+    background-color: #798f8c;
+    border-radius: 15px;
+}
+
+#tabla2 {
+    background-color: rgba(217, 235, 233, 0.7);
+    border: 2px solid black;
+    border-radius: 15px;
+    font-weight: bolder;
+}
+
+#container-tabla{
+    width: 75%;
+}
+
+@media (max-width: 1024px) {
+    #container-tabla {
+        width: 100%;
+    }
 }

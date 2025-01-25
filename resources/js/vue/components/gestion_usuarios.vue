@@ -8,7 +8,7 @@
                 </button>
             </div>
             <div class="col-md-6 d-flex justify-content-center mt-5">
-                <button class="btn btn-dark" @click="descargarUsuariosExcel">
+                <button class="btn btn-dark" @click="exportToExcel">
                     Descargar Usuarios (Excel)
                 </button>
             </div>
@@ -98,7 +98,8 @@
                                 <p class="card-text">{{ item.email }}</p>
                                 <p class="card-text"><strong>Rol:</strong> {{ item.rol }}</p>
                                 <p class="card-text"><strong>Creado en:</strong> {{ item.created_at }}</p>
-                                <button class="btn btn-primary btn-sm edit-btn" @click="editar(item.id)">Editar</button>
+                                <button class="btn btn-primary btn-sm edit-btn" @click="editar(item.id)"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button @click="eliminar(item.id)" class="btn btn-danger btn-sm mx-5"><i class="fa-solid fa-trash"></i></button>
                             </div>
                         </div>
                         <br>
@@ -131,7 +132,7 @@ import $ from 'jquery';
 
 DataTable.use(DataTablesCore);
 
-const { data, isLoading, search } = useListModel('user');
+const { data, isLoading, search, eliminar } = useListModel('user');
 const dataTable = ref([]);
 
 const columns = [
@@ -142,8 +143,8 @@ const columns = [
     {
         title: 'Acciones',
         render: (data, type, row) => `
-            <button class="btn btn-primary btn-sm edit-btn" data-id="${row.id}">Editar</button>
-            <button class="btn btn-danger btn-sm delete-btn" data-id="${row.id}">Eliminar</button>
+            <button class="btn btn-primary btn-sm edit-btn" data-id="${row.id}"><i class="fa-solid fa-pen-to-square"></i></button>
+            <button class="btn btn-danger btn-sm delete-btn" data-id="${row.id}"><i class="fa-solid fa-trash"></i></button>
         `
     }
 ];
@@ -151,6 +152,7 @@ const columns = [
 const tableOptions = {
     pageLength: 3,
     lengthMenu: [3, 5, 10],
+    responsive: true,
 };
 
 const filteredData = computed(() => {
@@ -169,6 +171,15 @@ watch(filteredData, (newData) => {
     dataTable.value = newData;
 });
 
+const exportToExcel = () => {
+    // Convertir los datos a formato adecuado para Excel
+    const worksheet = XLSX.utils.json_to_sheet(filteredData.value);// usar datos filtrados
+    const workbook = XLSX.utils.book_new();// crear un nuevo libro
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Usuarios');// agregar la hoja a un libro
+
+    XLSX.writeFile(workbook, 'usuarios.xlsx');//nombrarlo
+};
+
 const router = useRouter();
 const route = useRoute();
 
@@ -179,6 +190,8 @@ const { form, enviar, cancelar, editMode, setForm } = useFormModel('user', {
     password_confirmation: '',
     rol: 'usuario',
 });
+
+
 
 if (route.params.id) {
     fetchUser(route.params.id);
@@ -196,13 +209,24 @@ const fetchUser = async (id) => {
 
 const enviarUsuario = async (accion) => {
     try {
-        console.log("enviando datos");
+        if (form.password !== form.password_confirmation) {
+            alert('Las contraseñas no coinciden');
+            return;
+        }
         await enviar(accion);
-        window.location.reload();
+        fetchData();
     } catch (error) {
         console.error('Error al enviar el usuario:', error);
     }
 };
+
+document.querySelectorAll('.delete-btn').forEach(button => {
+    button.addEventListener('click', function() {
+        const id = this.getAttribute('data-id');
+        console.log('Botón clickeado. ID:', id);
+        eliminarElemento(id);
+    });
+});
 
 const editar = (id) => {
     router.push({ name: 'gestion_usuarios', params: { id } });
@@ -244,7 +268,6 @@ onMounted(() => {
         table.draw();
     }
 
-    // Delegar eventos de "Editar" y "Eliminar" al contenedor
     $('#tabla').on('click', '.edit-btn', function (event) {
         const id = $(this).data('id'); // Usar jQuery para obtener el atributo 'data-id'
         editar(id);

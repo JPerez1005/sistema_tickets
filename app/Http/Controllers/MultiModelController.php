@@ -30,6 +30,16 @@ class MultiModelController extends Controller
     public function all($type)
     {
         $model = $this->getModel($type);
+        $query = $model::query();
+        $user = Auth::user();
+        $allowed = Gate::allows('permisoUsuario', $user);
+
+        if ($allowed) {
+            if ($type == 'tickets') {
+                $query->where('usuario_creacion', $user->id);
+                return response()->json($query->get());
+            }
+        }
 
         if ($type == 'user' || $type=='historias') {
             $user = Auth::user(); // Obtiene el usuario autenticado
@@ -166,7 +176,7 @@ class MultiModelController extends Controller
             $allowed = Gate::allows('permisoAdministrador', $user);
     
             if (!$allowed) {
-                return response()->json(['message' => 'Unauthorized'], 401);
+                return response()->json(['message' => 'Estas inautorizado'], 401);
             }
         }
 

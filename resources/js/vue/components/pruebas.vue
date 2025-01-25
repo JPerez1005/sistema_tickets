@@ -7,65 +7,37 @@
                     Agregar
                 </button>
             </div>
-            <div class="col-md-6 d-flex justify-content-center mt-5">
-                <button class="btn btn-dark" @click="descargarUsuariosExcel">
-                    Descargar Usuarios (Excel)
-                </button>
-            </div>
         </div>
         <!-- Modal -->
         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                    <h1 class="modal-title fs-5 text-dark" id="exampleModalLabel">Modal title</h1>
+                    <h1 class="modal-title fs-5 text-dark" id="exampleModalLabel">Solicitar Ticket</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <!-- Formulario de registro/edición de usuario -->
-                        <form @submit.prevent="enviar(editMode ? 'modificacion' : 'creacion')">
+                        <form @submit.prevent="enviar(editMode ? 'modificacion' : 'creacion')" >
                             
                             <div class="row">
-                                <div class="col-md-6">
-                                    <div>
-                                        <label for="name" class="text-dark">Nombre:</label>
-                                        <br>
-                                        <input class="text-dark" type="text" id="name" v-model="form.name" required />
-                                    </div>
-                                    <br>
-                                    <div>
-                                        <label for="email" class="text-dark">Email:</label>
-                                        <br>
-                                        <input class="text-dark" type="email" id="email" v-model="form.email" required />
-                                    </div>
-                                    <br>
+                                <div class="d-flex justify-center align-items-center flex-column ">
+                                    <label for="titulo" class="text-dark">Titulo:</label>
+                                    <input class="text-dark" type="text" id="titulo" v-model="form.titulo" required />
                                 </div>
-                                <div class="col-md-6">
-                                    <div>
-                                        <label for="password" class="text-dark">Contraseña:</label>
-                                        <br>
-                                        <input class="text-dark" type="password" id="password" v-model="form.password" required />
-                                    </div>
-                                    <br>
-                                    <div>
-                                        <label for="password_confirmation" class="text-dark">Confirmar Contraseña:</label>
-                                        <br>
-                                        <input class="text-dark" type="password" id="password_confirmation" v-model="form.password_confirmation" required />
-                                    </div>
+                                <br>
+                                <div class="d-flex justify-center align-items-center flex-column mt-3">
+                                    <label for="descripcion" class="text-dark">Descripcion:</label>
+                                    <textarea class="text-dark" type="descripcion" id="descripcion" v-model="form.descripcion" required/>
                                 </div>
-                                <div class="col-md-6">
-                                    <br>
-                                    <div>
-                                        <label for="rol" class="text-dark">Rol:</label>
-                                        <select id="rol" v-model="form.rol" required>
-                                            <option value="administrador">Administrador</option>
-                                            <option value="soporte">Soporte</option>
-                                            <option value="usuario">Usuario</option>
-                                        </select>
-                                    </div>
+                                <div class="d-flex justify-center align-items-center flex-column mt-3">
+                                    <label for="estado" class="text-dark">Estado:</label>
+                                    <select id="estado" v-model="form.estado" required>
+                                        <option value="abierto">Abrir</option>
+                                        <option value="cancelado">Cancelar</option>
+                                    </select>
                                 </div>
-                                <div class="col-md-6">
-                                    <br>
+                                <div class="w-100 d-flex flex-row-reverse justify-center align-items-center mt-5">
                                     <button type="submit" class="btn btn-outline-dark">{{ editMode ? 'Actualizar' : 'Registrar' }}</button>
                                     <button type="button" class="btn btn-outline-dark" @click="recargar">cancelar</button>
                                 </div>
@@ -77,222 +49,229 @@
         </div>
 
         <div class="container mt-5 d-flex justify-content-center align-items-center flex-column">
-            <div class="row">
-                <div class="col-md-10">
-                    <!-- Input de búsqueda -->
-                    <input
-                    v-model="search"
-                    @input="buscar"
-                    placeholder="Buscar usuarios"
-                    class="form-control mb-3"
-                    />
-                </div>
-                <div class="col-md-2">
-                    <!-- Controles de paginación -->
-                    <nav v-if="pagination.total > pagination.perPage">
-                        <ul class="pagination">
-                            <li
-                            v-for="page in Math.ceil(pagination.total / pagination.perPage)"
-                            :key="page"
-                            :class="{ active: page === pagination.currentPage }"
-                            class="page-item"
-                            >
-                                <a @click.prevent="fetchPagina(page)" class="page-link" href="#">
-                                    {{ page }}
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-            </div>
             <div v-if="isMobile" class="container mt-5 d-flex justify-content-center align-items-center flex-column">
+                <!-- Campo de Búsqueda -->
+                <div class="mb-3 w-100">
+                    <!-- Input de búsqueda -->
+                    <input v-model="search" placeholder="Buscar acciones" class="form-control mb-3" />
+                </div>
                 <!-- Cards -->
                 <div class="row">
-                    <div class="col-md-4" v-for="item in data" :key="item.id">
+                    <div class="col-md-4" v-for="item in filteredData" :key="item.id">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">{{ item.name }}</h5>
-                                <p class="card-text">{{ item.email }}</p>
-                                <p class="card-text"><strong>Rol:</strong> {{ item.rol }}</p>
+                                <h5 class="card-title">{{ item.titulo }}</h5>
+                                <p class="card-text">{{ item.descripcion }}</p>
+                                <p class="card-text">{{ item.respuesta }}</p>
+                                <label for="">Usuario:</label>
+                                <p class="card-text">{{ item.usuario_creacion }}</p>
+                                <label for="">Usuario que dió respuesta:</label>
+                                <p class="card-text">{{ item.usuario_respuesta }}</p>
+                                <p class="card-text"><strong>estado:</strong> {{ item.estado }}</p>
+                                <p class="card-text"><strong>fecha creacion:</strong> {{ item.created_at }}</p>
+                                <p class="card-text"><strong>fecha respuesta:</strong> {{ item.updated_at }}</p>
                                 <button @click="editar(item.id)" class="btn btn-outline-dark"><i class="fa-solid fa-pen-to-square"></i></button>
-                                <button @click="eliminar(item.id)" class="btn btn-outline-danger" ><i class="fa-solid fa-trash"></i></button>
                             </div>
                         </div>
                         <br>
                     </div>
                 </div>
-                
             </div>
-            <div v-else class="container mt-5 d-flex justify-content-center align-items-center flex-column">
-                <!-- Tabla -->
-                <table class="table table-bordered border-light table-success table-striped text-center w-75">
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Email</th>
-                            <th>Rol</th>
-                            <th>Modificar</th>
-                            <th>Eliminar</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="item in data" :key="item.id">
-                            <td>{{ item.name }}</td>
-                            <td>{{ item.email }}</td>
-                            <td>{{ item.rol }}</td>
-                            <td>
-                                <button @click="editar(item.id)" class="btn btn-outline-dark"><i class="fa-solid fa-pen-to-square"></i></button>
-                            </td>
-                            <td>
-                                <button @click="eliminar(item.id)" class="btn btn-outline-danger"><i class="fa-solid fa-trash"></i></button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div v-else id="container-tabla-tickets">
+
+
+                <div id="tabla2" class="text-dark p-3">
+                    <!-- Tabla con DataTables -->
+                    <DataTable id="tabla-tickets" :columns="columns" :data="filteredData" :options="tableOptions"
+                        class="display text-light" />
+                </div>
             </div>
-    
-            
         </div>
     </div>
 </template>
-  
-<script>
-    import { useListModel2, useFormModel } from '../jsComponents/conexionModelos.js';
-    import { useRouter, useRoute } from 'vue-router';
-    import { ref, onMounted, onBeforeUnmount } from 'vue';
-    import * as XLSX from 'xlsx';
 
-    export default {
-        setup() {
+<script setup>
+import DataTable from 'datatables.net-vue3';
+import DataTablesCore from 'datatables.net';
+import { useListModel, useFormModel } from '../jsComponents/conexionModelos.js';
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue';
+import * as XLSX from 'xlsx';
+import { useRouter, useRoute } from 'vue-router';
+import $ from 'jquery';
 
-            const descargarUsuariosExcel = async () => {
-                try {
-                    const token = localStorage.getItem('auth_token'); // Obtener el token desde localStorage
-                    if (!token) {
-                        console.error('No se encontró el token de autenticación');
-                        return;
-                    }
+DataTable.use(DataTablesCore);
 
-                    const response = await fetch('/api/user/all', {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}` // Incluir el token en el encabezado
-                        },
-                    });
+const { data, isLoading, search } = useListModel('tickets');
+const dataTable = ref([]);
 
-                    if (!response.ok) {
-                        console.error('Error en la respuesta de la API:', response.status, response.statusText);
-                        return;
-                    }
+const columns = [
+    { data: 'titulo', title: 'Titulo' , defaultContent: ''},
+    { data: 'descripcion', title: 'Descripción', defaultContent: '' },
+    { data: 'estado', title: 'Estado', defaultContent: '' },
+    { data: 'created_at', title: 'Fecha de Creación', defaultContent: '' },
+    { data: 'updated_at', title: 'Fecha de Respuesta', defaultContent: '' },
+    { data: 'respuesta', title: 'Respuesta', defaultContent: '' },
+    { data: 'usuario_creacion', title: 'Usuario de envio', defaultContent: '' },
+    { data: 'usuario_respuesta', title: 'Usuario que respondió', defaultContent: '' },
+    {
+        title: 'Acciones',
+        render: (data, type, row) => `
+            <button class="btn btn-primary btn-sm edit-btn" data-id="${row.id}"><i class="fa-solid fa-pen-to-square"></i></button>
+        `
+    }
+];
 
-                    const data = await response.json();
+const tableOptions = {
+    pageLength: 3,
+    lengthMenu: [3, 5, 10],
+};
 
-                    if (!Array.isArray(data)) {
-                        console.error('Los datos recibidos no son válidos:', data);
-                        return;
-                    }
+const filteredData = computed(() => {
+    if (!search.value) return data.value;
+    return data.value.filter((item) => {
+        const searchLower = search.value.toLowerCase();
+        return (
+            item.titulo.toLowerCase().includes(searchLower) ||
+            item.descripcion.toLowerCase().includes(searchLower) ||
+            item.estado.toLowerCase().includes(searchLower) ||
+            item.created_at.toLowerCase().includes(searchLower) ||
+            item.updated_at.toLowerCase().includes(searchLower) ||
+            item.respuesta.toLowerCase().includes(searchLower) ||
+            item.usuario_creacion.toLowerCase().includes(searchLower) ||
+            item.usuario_respuesta.toLowerCase().includes(searchLower)
+        );
+    });
+});
 
-                    const worksheetData = data.map(user => ({
-                        Nombre: user.name,
-                        Email: user.email,
-                        Rol: user.rol,
-                    }));
+watch(filteredData, (newData) => {
+    dataTable.value = newData;
+});
 
-                    const worksheet = XLSX.utils.json_to_sheet(worksheetData);
-                    const workbook = XLSX.utils.book_new();
-                    XLSX.utils.book_append_sheet(workbook, worksheet, 'Usuarios');
-                    XLSX.writeFile(workbook, 'usuarios.xlsx');
-                } catch (error) {
-                    console.error('Error al generar el archivo Excel:', error);
-                }
-            };
+const exportToExcel = () => {
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
-            const recargar = () => {
-                console.log("Botón Cancelar presionado");
-                
-                const modal = new bootstrap.Modal(document.getElementById('exampleModal'));
-                modal.hide();
+    const startOfLastWeek = new Date(oneWeekAgo);
+    startOfLastWeek.setDate(oneWeekAgo.getDate() - oneWeekAgo.getDay());
+    startOfLastWeek.setHours(0, 0, 0, 0);
 
-                window.location.reload();
-            };
+    const endOfLastWeek = new Date(startOfLastWeek);
+    endOfLastWeek.setDate(startOfLastWeek.getDate() + 6);
+    endOfLastWeek.setHours(23, 59, 59, 999);
 
-            const isMobile = ref(false);
+    // Filtrar datos por fecha de creación dentro de la semana pasada
+    const filteredByWeek = filteredData.value.filter((item) => {
+        const createdAt = new Date(item.created_at);
+        return createdAt >= startOfLastWeek && createdAt <= endOfLastWeek;
+    });
 
-            // Función para detectar el tamaño de la pantalla
-            const checkScreenSize = () => {
-                isMobile.value = window.innerWidth <= 768; // 768px o el tamaño que prefieras
-            };
+    // Verificar si hay tickets de la semana pasada
+    if (filteredByWeek.length === 0) {
+        alert('No hay tickets de la semana pasada para exportar.');
+        return; // Salir de la función si no hay datos
+    }
 
-            onMounted(() => {
-                checkScreenSize(); // Verificar el tamaño al montar el componente
-                window.addEventListener('resize', checkScreenSize); // Escuchar cambios en el tamaño
-            });
+    // Convertir los datos a formato adecuado para Excel
+    const worksheet = XLSX.utils.json_to_sheet(filteredByWeek); // usar datos filtrados
+    const workbook = XLSX.utils.book_new(); // crear un nuevo libro
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Tickets Semana Pasada'); // agregar la hoja a un libro
 
-            onBeforeUnmount(() => {
-                window.removeEventListener('resize', checkScreenSize); // Limpiar el evento al desmontar
-            });
+    // Guardar el archivo
+    XLSX.writeFile(workbook, 'tickets_semana_pasada.xlsx'); // nombrarlo
+};
 
-            const router = useRouter();
-            const route = useRoute();
+const router = useRouter();
+const route = useRoute();
 
-            const { data, isLoading, pagination, fetchPagina, eliminar, search, buscar,fetchData } =
-            useListModel2('user');
+const { form, enviar, cancelar, editMode, setForm } = useFormModel('tickets', {
+    titulo: '',
+    descripcion: '',
+    estado: 'en_proceso',
+    usuario_creacion: window.appData.user.id,
+    usuario_respuesta: window.appData.user.id,
+    respuesta: '',
+});
 
-            const { form, enviar, cancelar, editMode } =
-            useFormModel('user', {
-                name: '',
-                email: '',
-                password: '',
-                password_confirmation: '',
-                rol: 'usuario', // Valor por defecto
-            });
+if (route.params.id) {
+    fetchTicket(route.params.id);
+}
 
-            if (route.params.id) {
-                fetchUser(route.params.id);
-            }
+const fetchTicket = async (id) => {
+    console.console.log("entré al fecthTicket");
+    
+    const ticket = await fetchPagina(id);
+    
+    form.titulo = ticket.titulo;
+    form.descripcion = ticket.descripcion;
+    form.estado = ticket.estado;
+    form.respuesta = ticket.respuesta;
+    form.usuario_respuesta = window.appData.user.id;
+};
 
-            const fetchUser = async (id) => {
-                const user = await fetchPagina(id);
-                form.name = user.name;
-                form.email = user.email;
-                form.password = ''; 
-                form.password_confirmation = ''; 
-                form.rol = user.rol;
-            };
 
-            const enviarUsuario = async (accion) => {
-                try {
-                    await enviar(accion);
-                    window.location.reload();
-                } catch (error) {
-                    console.error('Error al enviar el usuario:', error);
-                }
-            };
+const enviarTicket = async (accion) => {
+    try {
+        await enviar(accion);
+        window.location.reload();
+    } catch (error) {
+        console.error('Error al enviar el ticket:', error);
+    }
+};
 
-            const editar = (id) => {
-                router.push({ name: 'gestion_usuarios', params: { id } });
-                const modal = new bootstrap.Modal(document.getElementById('exampleModal'));
-                modal.show();
-            };
+const editar = (id) => {
+    router.push({ name: 'gestion_tickets', params: { id } });
+    const modal = new bootstrap.Modal(document.getElementById('exampleModal'));
+    modal.show();
+};
 
-            return {
-                isMobile,
-                data,
-                isLoading,
-                pagination,
-                fetchPagina,
-                eliminar,
-                search,
-                buscar,
-                form,
-                enviar: enviarUsuario,
-                cancelar,
-                editMode,
-                editar,
-                recargar,
-                descargarUsuariosExcel,
-            };
-        },
-    };
+const isMobile = ref(false);
+const checkScreenSize = () => {
+    isMobile.value = window.innerWidth <= 1023;
+};
+
+const recargar = () => {
+    console.log("Botón Cancelar presionado");
+    
+    const modal = new bootstrap.Modal(document.getElementById('exampleModal'));
+    modal.hide();
+
+    window.location.reload();
+};
+
+onMounted(() => {
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+
+    // Verificar si DataTable ya está inicializado
+    if (!$.fn.DataTable.isDataTable('#tabla-tickets')) {
+        // Inicializar DataTable
+        $('#tabla-tickets').DataTable({
+            columns,
+            data: filteredData.value,
+            ...tableOptions,
+        });
+    } else {
+        // Si ya está inicializado, solo actualizar los datos
+        const table = $('#tabla-tickets').DataTable();
+        table.clear();
+        table.rows.add(filteredData.value);
+        table.draw();
+    }
+
+    // Delegar eventos de "Editar" y "Eliminar" al contenedor
+    $('#tabla-tickets').on('click', '.edit-btn', function (event) {
+        const id = $(this).data('id'); // Usar jQuery para obtener el atributo 'data-id'
+        editar(id);
+    });
+});
+
+onBeforeUnmount(() => {
+    window.removeEventListener('resize', checkScreenSize);
+    // Destruir DataTable para liberar recursos
+    if ($.fn.DataTable.isDataTable('#tabla-tickets')) {
+        $('#tabla-tickets').DataTable().destroy();
+    }
+});
+
+
 </script>

@@ -108,7 +108,7 @@ input {
     background-position: center;
 }
 
-@import 'datatables.net-dt';
+/* @import 'datatables.net-dt'; */
 
 #tabla{
     background-color: #798f8c;
@@ -124,6 +124,17 @@ input {
 
 #container-tabla{
     width: 75%;
+}
+
+#container-tabla-tickets{
+    width: 100%;
+}
+
+#tabla-tickets{
+    background-color: #798f8c;
+    border-radius: 15px;
+    width: 80% !important;
+    font-size: small;
 }
 
 @media (max-width: 1024px) {

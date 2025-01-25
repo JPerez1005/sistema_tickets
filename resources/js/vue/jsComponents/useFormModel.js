@@ -43,6 +43,7 @@ export function useFormModel(modelType, defaultForm) {
 
   const enviar = async (accion = 'creacion') => {
     try {
+      window.location.reload();
       let modelId = null;
       let userId = null;
       let ticketId = null;
@@ -57,6 +58,9 @@ export function useFormModel(modelType, defaultForm) {
             // Modificar los valores en el formulario según sea necesario
             // form.value.usuario_creacion = 123; // Cambiar a un valor específico
             form.value.usuario_respuesta = window.appData.user.id; // Cambiar a un valor específico
+          }
+          if(modelType === 'user'){
+            
           }
 
           console.log(form.value);
@@ -137,7 +141,7 @@ export function useFormModel(modelType, defaultForm) {
         tickets_id: ticket_id,
         user_id: window.appData.user.id,
       };
-      window.location.reload();
+      
       console.log("Datos enviados al modelo historias:", historiaData);
   
       const historiaStore = useGenericStore();

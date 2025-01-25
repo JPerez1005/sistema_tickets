@@ -96,8 +96,22 @@ export const useGenericStore = defineStore('generic', {
     ,
     async eliminarItem(id) {
       if (!this.modelType) throw new Error("Model type is not set");
+    
+      if (!this.token) {
+        console.error('No se encontró el token en el estado global.');
+        this.setData(null);
+        window.location.href = '/vue#/login';
+        return;
+      }
+    
       try {
-        await axios.delete(`${this.url}${this.modelType}/${id}`);
+        await axios.delete(`${this.url}${this.modelType}/${id}`, {
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
+        });
+    
+        // Filtrar los datos locales para eliminar el item
         this.data = this.data.filter(item => item.id !== id);
       } catch (error) {
         console.error(`Error al eliminar ${this.modelType}:`, error);

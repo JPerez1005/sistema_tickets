@@ -43,12 +43,13 @@ import { useUsuarios } from './useUsuarios.js';
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import $ from 'jquery';
 import { useRouter } from 'vue-router';
+import { useScreenSize } from './useScreenSize.js';
 
 const router = useRouter();
 DataTable.use(DataTablesCore);
 
 const { data, search, filteredData, exportToExcel, eliminar } = useUsuarios('user');
-const isMobile = ref(false);
+const { isMobile } = useScreenSize();
 
 const columns = [
     { data: 'name', title: 'Nombre', defaultContent: '' },
@@ -76,10 +77,6 @@ const tableOptions = {
     responsive: true,
 };
 
-const checkScreenSize = () => {
-    isMobile.value = window.innerWidth <= 1023;
-};
-
 const editar = (id) => {
     router.push({ name: 'gestion_usuarios', params: { id } });
     const modal = new bootstrap.Modal(document.getElementById('exampleModal'));
@@ -87,8 +84,6 @@ const editar = (id) => {
 };
 
 onMounted(() => {
-    checkScreenSize();
-    window.addEventListener('resize', checkScreenSize);
 
     if (!$.fn.DataTable.isDataTable('#tabla')) {
         $('#tabla').DataTable({
@@ -110,8 +105,6 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
-    window.removeEventListener('resize', checkScreenSize);
-
     if ($.fn.DataTable.isDataTable('#tabla')) {
         $('#tabla').DataTable().destroy();
     }

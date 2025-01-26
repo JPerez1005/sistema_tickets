@@ -1,36 +1,90 @@
 <template>
-    <div class="col-md-9 d-flex justify-content-end mb-5">
-        <button class="btn btn-light" @click="exportToExcel">
-            Descargar Usuarios (Excel)
-        </button>
-    </div>
-    <div class="container mt-5 d-flex justify-content-center align-items-center flex-column mb-5">
-        <div v-if="isMobile" class="container mt-5 d-flex justify-content-center align-items-center flex-column">
-            <!-- Campo de Búsqueda -->
-            <div class="mb-3 w-100">
-                <input v-model="search" placeholder="Buscar acciones" class="form-control mb-3" />
+    <div class="fondo min-vh-100">
+        <div class="w-100 d-flex justify-center">
+            <div class="col-md-6 d-flex justify-content-center mt-5">
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    Agregar
+                </button>
             </div>
-            <!-- Cards -->
-            <div class="row">
-                <div class="col-md-4" v-for="item in filteredData" :key="item.id">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ item.name }}</h5>
-                            <p class="card-text">{{ item.email }}</p>
-                            <p class="card-text"><strong>Rol:</strong> {{ item.rol }}</p>
-                            <p class="card-text"><strong>Creado en:</strong> {{ item.created_at }}</p>
-                            <button class="btn btn-primary btn-sm edit-btn" @click="editar(item.id)"><i class="fa-solid fa-pen-to-square"></i></button>
-                            <button @click="eliminar(item.id)" class="btn btn-danger btn-sm mx-5"><i class="fa-solid fa-trash"></i></button>
-                        </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h1 class="modal-title fs-5 text-dark" id="exampleModalLabel">Solicitar Ticket</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <br>
+                    <div class="modal-body">
+                        <!-- Formulario de registro/edición de usuario -->
+                        <form @submit.prevent="enviar(editMode ? 'modificacion' : 'creacion')" >
+                            
+                            <div class="row">
+                                <div class="d-flex justify-center align-items-center flex-column ">
+                                    <label for="titulo" class="text-dark">Titulo:</label>
+                                    <input class="text-dark" type="text" id="titulo" v-model="form.titulo" required />
+                                </div>
+                                <br>
+                                <div class="d-flex justify-center align-items-center flex-column mt-3">
+                                    <label for="descripcion" class="text-dark">Descripcion:</label>
+                                    <textarea class="text-dark" type="descripcion" id="descripcion" v-model="form.descripcion" required/>
+                                </div>
+                                <div class="d-flex justify-center align-items-center flex-column mt-3">
+                                    <label for="estado" class="text-dark">Estado:</label>
+                                    <select id="estado" v-model="form.estado" required>
+                                        <option value="abierto">Abrir</option>
+                                        <option value="cancelado">Cancelar</option>
+                                    </select>
+                                </div>
+                                <div class="w-100 d-flex flex-row-reverse justify-center align-items-center mt-5">
+                                    <button type="submit" class="btn btn-outline-dark">{{ editMode ? 'Actualizar' : 'Registrar' }}</button>
+                                    <button type="button" class="btn btn-outline-dark" @click="recargar">cancelar</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-        <div v-else id="container-tabla">
-            <div id="tabla2" class="text-dark p-3">
-                <DataTable id="tabla" :columns="columns" :data="filteredData" :options="tableOptions"
-                    class="display w-100 text-light" />
+
+        <div class="container mt-5 d-flex justify-content-center align-items-center flex-column">
+            <div v-if="isMobile" class="container mt-5 d-flex justify-content-center align-items-center flex-column">
+                <!-- Campo de Búsqueda -->
+                <div class="mb-3 w-100">
+                    <!-- Input de búsqueda -->
+                    <input v-model="search" placeholder="Buscar acciones" class="form-control mb-3" />
+                </div>
+                <!-- Cards -->
+                <div class="row">
+                    <div class="col-md-4" v-for="item in filteredData" :key="item.id">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ item.titulo }}</h5>
+                                <p class="card-text">{{ item.descripcion }}</p>
+                                <p class="card-text">{{ item.respuesta }}</p>
+                                <label for="">Usuario:</label>
+                                <p class="card-text">{{ item.usuario_creacion }}</p>
+                                <label for="">Usuario que dió respuesta:</label>
+                                <p class="card-text">{{ item.usuario_respuesta }}</p>
+                                <p class="card-text"><strong>estado:</strong> {{ item.estado }}</p>
+                                <p class="card-text"><strong>fecha creacion:</strong> {{ item.created_at }}</p>
+                                <p class="card-text"><strong>fecha respuesta:</strong> {{ item.updated_at }}</p>
+                                <button @click="editar(item.id)" class="btn btn-outline-dark"><i class="fa-solid fa-pen-to-square"></i></button>
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+                </div>
+            </div>
+            <div v-else id="container-tabla-tickets">
+
+
+                <div id="tabla2" class="text-dark p-3">
+                    <!-- Tabla con DataTables -->
+                    <DataTable id="tabla-tickets" :columns="columns" :data="filteredData" :options="tableOptions"
+                        class="display text-light" />
+                </div>
             </div>
         </div>
     </div>
@@ -39,33 +93,30 @@
 <script setup>
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net';
-import { useUsuarios } from './useUsuarios.js';
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { useListModel, useFormModel } from '../jsComponents/conexionModelos.js';
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue';
+import * as XLSX from 'xlsx';
+import { useRouter, useRoute } from 'vue-router';
 import $ from 'jquery';
-import { useRouter } from 'vue-router';
 
-const router = useRouter();
 DataTable.use(DataTablesCore);
 
-const { data, search, filteredData, exportToExcel, eliminar } = useUsuarios('user');
-const isMobile = ref(false);
+const { data, isLoading, search } = useListModel('tickets');
+const dataTable = ref([]);
 
 const columns = [
-    { data: 'name', title: 'Nombre', defaultContent: '' },
-    { data: 'email', title: 'Correo Electrónico', defaultContent: '' },
-    { data: 'rol', title: 'Rol', defaultContent: '' },
+    { data: 'titulo', title: 'Titulo' , defaultContent: ''},
+    { data: 'descripcion', title: 'Descripción', defaultContent: '' },
+    { data: 'estado', title: 'Estado', defaultContent: '' },
     { data: 'created_at', title: 'Fecha de Creación', defaultContent: '' },
+    { data: 'updated_at', title: 'Fecha de Respuesta', defaultContent: '' },
+    { data: 'respuesta', title: 'Respuesta', defaultContent: '' },
+    { data: 'usuario_creacion', title: 'Usuario de envio', defaultContent: '' },
+    { data: 'usuario_respuesta', title: 'Usuario que respondió', defaultContent: '' },
     {
         title: 'Acciones',
         render: (data, type, row) => `
-            <div class="action-buttons">
-                <button class="btn btn-primary btn-sm edit-btn" data-id="${row.id}">
-                    <i class="fa-solid fa-pen-to-square"></i>
-                </button>
-                <button class="btn btn-danger btn-sm delete-btn" data-id="${row.id}">
-                    <i class="fa-solid fa-trash"></i>
-                </button>
-            </div>
+            <button class="btn btn-primary btn-sm edit-btn" data-id="${row.id}"><i class="fa-solid fa-pen-to-square"></i></button>
         `
     }
 ];
@@ -73,47 +124,121 @@ const columns = [
 const tableOptions = {
     pageLength: 3,
     lengthMenu: [3, 5, 10],
-    responsive: true,
 };
 
+const filteredData = computed(() => {
+    if (!search.value) return data.value;
+    return data.value.filter((item) => {
+        const searchLower = search.value.toLowerCase();
+        return (
+            item.titulo.toLowerCase().includes(searchLower) ||
+            item.descripcion.toLowerCase().includes(searchLower) ||
+            item.estado.toLowerCase().includes(searchLower) ||
+            item.created_at.toLowerCase().includes(searchLower) ||
+            item.updated_at.toLowerCase().includes(searchLower) ||
+            item.respuesta.toLowerCase().includes(searchLower) ||
+            item.usuario_creacion.toLowerCase().includes(searchLower) ||
+            item.usuario_respuesta.toLowerCase().includes(searchLower)
+        );
+    });
+});
+
+watch(filteredData, (newData) => {
+    dataTable.value = newData;
+});
+
+const router = useRouter();
+const route = useRoute();
+
+const { form, enviar, cancelar, editMode, setForm } = useFormModel('tickets', {
+    titulo: '',
+    descripcion: '',
+    estado: 'en_proceso',
+    usuario_creacion: window.appData.user.id,
+    usuario_respuesta: window.appData.user.id,
+    respuesta: '',
+});
+
+if (route.params.id) {
+    fetchTicket(route.params.id);
+}
+
+const fetchTicket = async (id) => {
+    console.console.log("entré al fecthTicket");
+    
+    const ticket = await fetchPagina(id);
+    
+    form.titulo = ticket.titulo;
+    form.descripcion = ticket.descripcion;
+    form.estado = ticket.estado;
+    form.respuesta = ticket.respuesta;
+    form.usuario_respuesta = window.appData.user.id;
+};
+
+
+const enviarTicket = async (accion) => {
+    try {
+        await enviar(accion);
+        window.location.reload();
+    } catch (error) {
+        console.error('Error al enviar el ticket:', error);
+    }
+};
+
+const editar = (id) => {
+    router.push({ name: 'gestion_tickets_usuarios', params: { id } });
+    const modal = new bootstrap.Modal(document.getElementById('exampleModal'));
+    modal.show();
+};
+
+const isMobile = ref(false);
 const checkScreenSize = () => {
     isMobile.value = window.innerWidth <= 1023;
 };
 
-const editar = (id) => {
-    router.push({ name: 'gestion_usuarios', params: { id } });
+const recargar = () => {
+    console.log("Botón Cancelar presionado");
+    
     const modal = new bootstrap.Modal(document.getElementById('exampleModal'));
-    modal.show();
+    modal.hide();
+
+    window.location.reload();
 };
 
 onMounted(() => {
     checkScreenSize();
     window.addEventListener('resize', checkScreenSize);
 
-    if (!$.fn.DataTable.isDataTable('#tabla')) {
-        $('#tabla').DataTable({
+    // Verificar si DataTable ya está inicializado
+    if (!$.fn.DataTable.isDataTable('#tabla-tickets')) {
+        // Inicializar DataTable
+        $('#tabla-tickets').DataTable({
             columns,
             data: filteredData.value,
             ...tableOptions,
         });
+    } else {
+        // Si ya está inicializado, solo actualizar los datos
+        const table = $('#tabla-tickets').DataTable();
+        table.clear();
+        table.rows.add(filteredData.value);
+        table.draw();
     }
 
-    $('#tabla').on('click', '.edit-btn', function () {
-        const id = $(this).data('id');
+    // Delegar eventos de "Editar" y "Eliminar" al contenedor
+    $('#tabla-tickets').on('click', '.edit-btn', function (event) {
+        const id = $(this).data('id'); // Usar jQuery para obtener el atributo 'data-id'
         editar(id);
-    });
-
-    $('#tabla').on('click', '.delete-btn', function () {
-        const id = $(this).data('id');
-        eliminar(id);
     });
 });
 
 onBeforeUnmount(() => {
     window.removeEventListener('resize', checkScreenSize);
-
-    if ($.fn.DataTable.isDataTable('#tabla')) {
-        $('#tabla').DataTable().destroy();
+    // Destruir DataTable para liberar recursos
+    if ($.fn.DataTable.isDataTable('#tabla-tickets')) {
+        $('#tabla-tickets').DataTable().destroy();
     }
 });
+
+
 </script>

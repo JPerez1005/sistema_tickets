@@ -39,16 +39,16 @@
 <script setup>
 import DataTable from 'datatables.net-vue3';
 import DataTablesCore from 'datatables.net';
-import { useUsuarios } from './useUsuarios.js';
+import { servicios } from './js/servicios.js';
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import $ from 'jquery';
 import { useRouter } from 'vue-router';
-import { useScreenSize } from './useScreenSize.js';
+import { useScreenSize } from './js/useScreenSize.js';
 
 const router = useRouter();
 DataTable.use(DataTablesCore);
 
-const { data, search, filteredData, exportToExcel, eliminar } = useUsuarios('user');
+const { data, search, filteredData, exportToExcel, eliminar } = servicios('user');
 const { isMobile } = useScreenSize();
 
 const columns = [

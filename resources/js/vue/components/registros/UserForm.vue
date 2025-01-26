@@ -79,17 +79,17 @@
 </template>
 
 <script setup>
-import { useFormModel } from '../../jsComponents/conexionModelos.js';
+    import { useFormModel } from '../../jsComponents/conexionModelos.js';
 
-const { form, enviar, cancelar, editMode, setForm } = useFormModel('user', {
-    name: '',
-    email: '',
-    password: '',
-    password_confirmation: '',
-    rol: 'usuario',
-});
+    const { form, enviar, cancelar, editMode, setForm } = useFormModel('user', {
+        name: '',
+        email: '',
+        password: '',
+        password_confirmation: '',
+        rol: 'usuario',
+    });
 
-const recargar = () => {
-    window.location.reload();
-};
+    const recargar = () => {
+        window.location.reload();
+    };
 </script>

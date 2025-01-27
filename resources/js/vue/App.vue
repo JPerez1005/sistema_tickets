@@ -111,6 +111,7 @@
   
             // Redirige a la página de inicio o login
             this.$router.push({ name: 'login' });
+            localStorage.setItem('buttonClicked', 'false');
           })
           .catch(error => {
             console.error("Error al cerrar sesión:", error.response ? error.response.data : error.message);
